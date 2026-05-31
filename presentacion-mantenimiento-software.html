@@ -1,0 +1,2261 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ingeniería del Mantenimiento de Software — IPS Gral. San Martín</title>
+
+    <!-- Google Fonts: Cormorant (serif display) + IBM Plex Sans (body) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,400;0,600;1,400;1,600&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
+    <style>
+/* === BLOCK 0: Design Tokens === */
+:root {
+    /* Colors — Dark Botanical with Amber Accent */
+    --bg-primary: #0f0f0f;
+    --text-primary: #e8e4df;
+    --text-secondary: #9a9590;
+    --accent-amber: #FFB300;
+    --accent-terracotta: #d4a574;
+    --accent-pink: #e8b4b8;
+    --slide-bg: #0f0f0f;
+
+    /* Typography */
+    --font-display: 'Cormorant', serif;
+    --font-body: 'IBM Plex Sans', sans-serif;
+    --title-size: 82px;
+    --subtitle-size: 30px;
+    --body-size: 26px;
+    --small-size: 20px;
+
+    /* Spacing */
+    --slide-padding: 80px;
+    --content-gap: 28px;
+
+    /* Animation */
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    --duration-normal: 0.7s;
+    --stage-bg: #0f0f0f;
+}
+
+/* === BLOCK 1: Reset & Base === */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* === BLOCK 2: viewport-base.css (MANDATORY — verbatim) === */
+/* === viewport-base.css START === */
+html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background: var(--stage-bg, #0f0f0f); }
+.deck-viewport { position: fixed; inset: 0; overflow: hidden; background: var(--stage-bg, #0f0f0f); }
+.deck-stage { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; overflow: hidden; transform-origin: 0 0; background: var(--slide-bg, #0f0f0f); }
+.slide { position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden; display: block; visibility: hidden; opacity: 0; pointer-events: none; background: var(--slide-bg, #0f0f0f); }
+.slide.active, .slide.visible { visibility: visible; opacity: 1; pointer-events: auto; z-index: 1; }
+img, video, canvas, svg { max-width: 100%; max-height: 100%; }
+.deck-controls { position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%); z-index: 1000; }
+@media print {
+  html, body { width: 1920px; height: auto; overflow: visible; background: #fff; }
+  .deck-viewport { position: static; overflow: visible; background: #fff; }
+  .deck-stage { position: static; width: auto; height: auto; transform: none !important; background: none; }
+  .slide { position: relative; display: block !important; visibility: visible !important; opacity: 1 !important; pointer-events: auto !important; width: 1920px; height: 1080px; break-after: page; page-break-after: always; }
+  .slide:last-child { break-after: auto; page-break-after: auto; }
+  .deck-controls { display: none !important; }
+}
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.2s !important; } }
+/* === viewport-base.css END === */
+
+/* === BLOCK 3: Slide Content Layout === */
+.slide-content {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    padding: var(--slide-padding);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    z-index: 2;
+}
+
+/* === BLOCK 4: Background Blobs (atmospheric depth) === */
+.slide::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+        radial-gradient(ellipse 500px 500px at 10% 90%, rgba(255,179,0,0.04) 0%, transparent 70%),
+        radial-gradient(ellipse 600px 600px at 90% 10%, rgba(212,165,116,0.035) 0%, transparent 70%),
+        radial-gradient(ellipse 400px 400px at 80% 80%, rgba(232,180,184,0.03) 0%, transparent 70%);
+}
+
+.title-slide::before {
+    background:
+        radial-gradient(ellipse 700px 700px at 15% 85%, rgba(255,179,0,0.06) 0%, transparent 60%),
+        radial-gradient(ellipse 800px 800px at 85% 15%, rgba(212,165,116,0.05) 0%, transparent 60%),
+        radial-gradient(ellipse 500px 500px at 50% 50%, rgba(232,180,184,0.04) 0%, transparent 60%),
+        radial-gradient(ellipse 600px 400px at 70% 70%, rgba(255,179,0,0.03) 0%, transparent 70%);
+}
+
+.section-header::before {
+    background:
+        radial-gradient(ellipse 900px 700px at 50% 60%, rgba(255,179,0,0.08) 0%, transparent 50%),
+        radial-gradient(ellipse 600px 600px at 20% 80%, rgba(212,165,116,0.04) 0%, transparent 70%),
+        radial-gradient(ellipse 500px 500px at 80% 20%, rgba(232,180,184,0.03) 0%, transparent 70%);
+}
+
+/* Thin vertical accent lines on sides */
+.slide::after {
+    content: '';
+    position: absolute;
+    left: 40px;
+    top: 15%;
+    width: 1px;
+    height: 70%;
+    background: linear-gradient(to bottom, transparent, rgba(212,165,116,0.15), transparent);
+    z-index: 1;
+    pointer-events: none;
+}
+
+/* === BLOCK 5: Typography === */
+.slide h1,
+.slide h2 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-style: italic;
+    font-variant-numeric: lining-nums;
+    color: var(--text-primary);
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+}
+
+.slide h1 { font-size: var(--title-size); }
+.slide h2 { font-size: 56px; }
+
+.slide p,
+.slide li {
+    font-family: var(--font-body);
+    font-weight: 300;
+    font-size: var(--body-size);
+    color: var(--text-primary);
+    line-height: 1.6;
+}
+
+.accent { color: var(--accent-amber); }
+.text-secondary { color: var(--text-secondary); font-family: var(--font-body); font-weight: 300; }
+
+/* Decorative rule under titles */
+.title-rule {
+    width: 80px;
+    height: 1px;
+    background: var(--accent-amber);
+    margin: 20px 0 30px;
+    opacity: 0.7;
+}
+
+/* === BLOCK 6: Animation — Reveal System === */
+.reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity var(--duration-normal) var(--ease-out-expo),
+                transform var(--duration-normal) var(--ease-out-expo);
+}
+.slide.visible .reveal {
+    opacity: 1;
+    transform: translateY(0);
+}
+.reveal:nth-child(1) { transition-delay: 0.08s; }
+.reveal:nth-child(2) { transition-delay: 0.18s; }
+.reveal:nth-child(3) { transition-delay: 0.28s; }
+.reveal:nth-child(4) { transition-delay: 0.38s; }
+.reveal:nth-child(5) { transition-delay: 0.48s; }
+.reveal:nth-child(6) { transition-delay: 0.58s; }
+.reveal:nth-child(7) { transition-delay: 0.68s; }
+.reveal:nth-child(8) { transition-delay: 0.78s; }
+.reveal:nth-child(9) { transition-delay: 0.88s; }
+
+.reveal-scale {
+    opacity: 0;
+    transform: scale(0.92);
+    transition: opacity var(--duration-normal) var(--ease-out-expo),
+                transform var(--duration-normal) var(--ease-out-expo);
+}
+.slide.visible .reveal-scale {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* === BLOCK 7: Title Slide === */
+.title-slide .slide-content {
+    justify-content: center;
+    align-items: flex-start;
+    padding-left: 120px;
+    padding-right: 120px;
+}
+.title-slide .kicker {
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: 16px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent-amber);
+    margin-bottom: 32px;
+}
+.title-slide h1 {
+    font-size: 88px;
+    margin-bottom: 0;
+}
+.title-slide .title-sub {
+    font-family: var(--font-body);
+    font-weight: 300;
+    font-size: var(--subtitle-size);
+    color: var(--text-primary);
+    margin-top: 28px;
+    line-height: 1.5;
+}
+.title-slide .title-footer {
+    font-family: var(--font-body);
+    font-weight: 300;
+    font-size: 17px;
+    color: var(--text-secondary);
+    margin-top: 48px;
+    line-height: 1.7;
+    max-width: 900px;
+}
+
+/* === BLOCK 8: Agenda Slide === */
+.agenda-slide .slide-content {
+    justify-content: center;
+    padding-left: 140px;
+}
+.agenda-slide h2 {
+    font-size: 64px;
+    margin-bottom: 48px;
+}
+.agenda-list {
+    list-style: none;
+    padding: 0;
+}
+.agenda-list li {
+    font-family: var(--font-body);
+    font-weight: 400;
+    font-size: 30px;
+    color: var(--text-primary);
+    padding: 16px 0;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+.agenda-list li .dot {
+    width: 8px;
+    height: 8px;
+    background: var(--accent-amber);
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+.agenda-list li .num {
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: 18px;
+    color: var(--accent-amber);
+    width: 28px;
+    text-align: right;
+    flex-shrink: 0;
+}
+
+/* === BLOCK 9: Section Header Slides === */
+.section-header .slide-content {
+    justify-content: center;
+    align-items: flex-start;
+    padding-left: 140px;
+}
+.section-number {
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: 120px;
+    color: var(--accent-amber);
+    opacity: 0.25;
+    line-height: 1;
+    margin-bottom: 16px;
+}
+.section-header h2 {
+    font-size: 72px;
+    margin-bottom: 16px;
+}
+.section-header .section-subtitle {
+    font-family: var(--font-body);
+    font-weight: 300;
+    font-size: 24px;
+    color: var(--text-secondary);
+    margin-top: 8px;
+}
+
+/* === BLOCK 10: Content Slides — General === */
+.content-slide .slide-content {
+    justify-content: center;
+    padding: 30px 60px;
+}
+.content-slide h2 {
+    font-size: 64px;
+    margin-bottom: 16px;
+}
+.content-slide .content-body {
+    margin-top: 28px;
+}
+
+/* Comparison boxes */
+.comparison-grid {
+    display: flex;
+    gap: 48px;
+    margin-top: 36px;
+}
+.comparison-box {
+    flex: 1;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-top: 2px solid var(--accent-amber);
+    border-radius: 4px;
+    padding: 44px 40px;
+}
+.comparison-box h3 {
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: 22px;
+    color: var(--accent-amber);
+    letter-spacing: 0.05em;
+    margin-bottom: 18px;
+}
+.comparison-box p {
+    font-size: 28px;
+    color: var(--text-primary);
+    font-style: italic;
+    line-height: 1.5;
+}
+
+/* Two-column layout */
+.two-col {
+    display: flex;
+    gap: 60px;
+    margin-top: 28px;
+}
+.two-col > div { flex: 1; }
+
+/* Definition items with amber markers */
+.def-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 24px;
+    margin-bottom: 32px;
+}
+.def-item .marker {
+    width: 3px;
+    min-height: 30px;
+    background: var(--accent-amber);
+    border-radius: 2px;
+    flex-shrink: 0;
+    margin-top: 6px;
+}
+.def-item .def-label {
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: 24px;
+    color: var(--accent-amber);
+    margin-bottom: 8px;
+}
+.def-item .def-text {
+    font-size: 28px;
+}
+
+/* Callout box with amber left border */
+.callout-box {
+    background: rgba(255,179,0,0.03);
+    border-left: 3px solid var(--accent-amber);
+    border-radius: 0 4px 4px 0;
+    padding: 36px 40px;
+    margin-top: 36px;
+    max-width: 1400px;
+}
+.callout-box p {
+    font-size: 28px;
+    font-style: italic;
+    line-height: 1.6;
+    color: var(--text-primary);
+}
+
+/* === BLOCK 11: Quote Slide === */
+.quote-slide .slide-content {
+    justify-content: center;
+    align-items: flex-start;
+    padding: 30px 80px;
+}
+.quote-slide h2 {
+    font-size: 64px;
+    margin-bottom: 36px;
+}
+.quote-text {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-style: italic;
+    font-size: 42px;
+    color: var(--text-primary);
+    line-height: 1.5;
+    max-width: 1600px;
+    position: relative;
+    padding-left: 40px;
+}
+.quote-text::before {
+    content: '\201C';
+    position: absolute;
+    left: -20px;
+    top: -30px;
+    font-size: 140px;
+    color: var(--accent-amber);
+    opacity: 0.15;
+    font-family: var(--font-display);
+    line-height: 1;
+}
+.quote-text::after {
+    content: '\201D';
+    font-size: 140px;
+    color: var(--accent-amber);
+    opacity: 0.15;
+    font-family: var(--font-display);
+    line-height: 1;
+    vertical-align: -0.4em;
+    margin-left: 8px;
+}
+
+/* === BLOCK 12: Stat / Impact Slide === */
+.stat-row {
+    display: flex;
+    gap: 80px;
+    margin-top: 40px;
+    align-items: flex-end;
+}
+.stat-block { flex: 1; }
+.stat-number {
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: 110px;
+    color: var(--accent-amber);
+    line-height: 1;
+    letter-spacing: -0.02em;
+}
+.stat-label {
+    font-family: var(--font-body);
+    font-weight: 300;
+    font-size: 26px;
+    color: var(--text-secondary);
+    margin-top: 14px;
+}
+
+/* === BLOCK 13: Bar Visuals === */
+.bar-group {
+    margin-top: 24px;
+}
+.bar-item {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+.bar-label {
+    font-family: var(--font-body);
+    font-weight: 400;
+    font-size: 24px;
+    color: var(--text-secondary);
+    width: 200px;
+    text-align: right;
+    flex-shrink: 0;
+}
+.bar-track {
+    flex: 1;
+    height: 36px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 4px;
+    overflow: hidden;
+    max-width: 700px;
+}
+.bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    background: var(--accent-amber);
+    transition: width 1.2s var(--ease-out-expo);
+}
+.bar-fill.terracotta { background: var(--accent-terracotta); }
+.bar-value {
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: 22px;
+    color: var(--accent-amber);
+    width: 70px;
+    flex-shrink: 0;
+}
+
+/* Timeline row */
+.timeline-row {
+    display: flex;
+    gap: 80px;
+    margin-top: 40px;
+    align-items: flex-start;
+}
+.timeline-item {
+    flex: 1;
+    text-align: center;
+}
+.timeline-era {
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: 28px;
+    color: var(--accent-amber);
+    margin-bottom: 18px;
+}
+.timeline-bar-wrap {
+    margin: 0 auto;
+    width: 100%;
+    max-width: 400px;
+}
+.timeline-bar-label {
+    font-family: var(--font-body);
+    font-weight: 300;
+    font-size: 18px;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+    text-align: left;
+}
+.timeline-bar-track {
+    height: 26px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 12px;
+}
+.timeline-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    background: var(--accent-amber);
+    transition: width 1.2s var(--ease-out-expo);
+}
+
+/* === BLOCK 14: Role Cards === */
+.role-header {
+    margin-bottom: 20px;
+}
+.role-header .role-tag {
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: 14px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent-amber);
+    opacity: 0.7;
+    margin-bottom: 12px;
+}
+.role-tasks {
+    list-style: none;
+    padding: 0;
+    margin-top: 24px;
+    max-width: 1000px;
+}
+.role-tasks li {
+    display: flex;
+    align-items: flex-start;
+    gap: 18px;
+    margin-bottom: 20px;
+    font-size: 28px;
+    line-height: 1.6;
+    color: var(--text-primary);
+}
+.role-tasks li .task-marker {
+    width: 6px;
+    height: 6px;
+    background: var(--accent-amber);
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 11px;
+}
+
+/* === BLOCK 15: Pill / Tag Cards === */
+.pill-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-top: 32px;
+}
+.pill {
+    background: rgba(255,179,0,0.06);
+    border: 1px solid rgba(255,179,0,0.15);
+    border-radius: 6px;
+    padding: 20px 32px;
+    font-family: var(--font-body);
+    font-weight: 400;
+    font-size: 26px;
+    color: var(--text-primary);
+    transition: border-color 0.3s ease, background 0.3s ease;
+}
+.pill:hover {
+    border-color: var(--accent-amber);
+    background: rgba(255,179,0,0.1);
+}
+/* Pill with definition expansion */
+.pill-def {
+    background: rgba(255,179,0,0.04);
+    border: 1px solid rgba(255,179,0,0.12);
+    border-radius: 8px;
+    padding: 20px 24px;
+    min-width: 260px;
+    max-width: 340px;
+    flex: 1;
+}
+.pill-def .pill-name {
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: 24px;
+    color: var(--accent-amber);
+    margin-bottom: 10px;
+}
+.pill-def .pill-desc {
+    font-family: var(--font-body);
+    font-weight: 300;
+    font-size: 20px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+/* === BLOCK 16: Domino / Flow Visual === */
+.domino-flow {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 40px;
+}
+.domino-node {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 6px;
+    padding: 28px 36px;
+    font-family: var(--font-body);
+    font-weight: 400;
+    font-size: 28px;
+    color: var(--text-primary);
+    text-align: center;
+    min-width: 180px;
+}
+.domino-node.highlight {
+    border-color: var(--accent-amber);
+    background: rgba(255,179,0,0.06);
+}
+.domino-arrow {
+    font-size: 28px;
+    color: var(--accent-amber);
+    opacity: 0.6;
+    flex-shrink: 0;
+}
+
+/* === BLOCK 17: Laws / Numbered List (reused for changelog) === */
+.laws-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 32px;
+}
+.laws-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 24px;
+    margin-bottom: 36px;
+}
+.laws-list .law-num {
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: 48px;
+    color: var(--accent-amber);
+    opacity: 0.4;
+    line-height: 1;
+    flex-shrink: 0;
+    width: 60px;
+    text-align: right;
+}
+.laws-list .law-content h3 {
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: 26px;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+}
+.laws-list .law-content p {
+    font-size: 22px;
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
+/* === BLOCK 18: Flow Sequence (6-node chain, slide 30) === */
+.flow-sequence {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 40px;
+    flex-wrap: nowrap;
+    justify-content: center;
+}
+.flow-box {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 6px;
+    padding: 26px 22px;
+    font-family: var(--font-body);
+    font-weight: 400;
+    font-size: 22px;
+    color: var(--text-primary);
+    text-align: center;
+    min-width: 180px;
+    flex-shrink: 0;
+}
+.flow-box.trap {
+    border-color: var(--accent-amber);
+    background: rgba(255,179,0,0.08);
+    box-shadow: 0 0 30px rgba(255,179,0,0.06);
+}
+.flow-arrow {
+    font-size: 24px;
+    color: var(--accent-amber);
+    opacity: 0.5;
+    flex-shrink: 0;
+}
+
+/* === BLOCK 19: Conclusion Slide === */
+.conclusion-text {
+    font-family: var(--font-body);
+    font-weight: 300;
+    font-size: 32px;
+    color: var(--text-primary);
+    line-height: 1.8;
+    max-width: 1500px;
+    margin-top: 36px;
+}
+.conclusion-text strong {
+    font-weight: 500;
+    color: var(--accent-amber);
+}
+
+/* === BLOCK 20: Slide Counter (outside stage) === */
+.slide-counter {
+    position: fixed;
+    bottom: 24px;
+    right: 36px;
+    font-family: var(--font-body);
+    font-weight: 400;
+    font-size: 14px;
+    color: var(--accent-amber);
+    opacity: 0.5;
+    z-index: 1000;
+    letter-spacing: 0.08em;
+    pointer-events: none;
+    user-select: none;
+}
+
+/* === BLOCK 21: Dot Navigation === */
+.dot-nav {
+    position: fixed;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.dot-nav button {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,179,0,0.2);
+    background: transparent;
+    cursor: pointer;
+    padding: 0;
+    transition: all 0.3s ease;
+}
+.dot-nav button.active {
+    background: var(--accent-amber);
+    border-color: var(--accent-amber);
+    transform: scale(1.3);
+}
+.dot-nav button:hover {
+    border-color: var(--accent-amber);
+}
+
+/* === BLOCK 22: Inline Editing System === */
+.edit-hotzone {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 80px;
+    height: 80px;
+    z-index: 10000;
+    cursor: pointer;
+}
+.edit-toggle {
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    border: 1px solid rgba(255,179,0,0.2);
+    background: rgba(15,15,15,0.9);
+    color: var(--accent-amber);
+    font-size: 16px;
+    cursor: pointer;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 10001;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(8px);
+}
+.edit-toggle.show,
+.edit-toggle.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+.edit-toggle.active {
+    background: rgba(255,179,0,0.15);
+    border-color: var(--accent-amber);
+}
+[contenteditable="true"] {
+    outline: 1px dashed rgba(255,179,0,0.3) !important;
+    outline-offset: 4px;
+    cursor: text;
+}
+
+/* === BLOCK 23: SVG Table Styles (Cuadro 1 & Cuadro 4) === */
+.svg-table-wrap {
+    margin-top: 32px;
+    display: flex;
+    justify-content: center;
+}
+.svg-table-wrap svg {
+    width: auto;
+    height: auto;
+}
+.svg-table-caption {
+    font-family: var(--font-body);
+    font-weight: 400;
+    font-size: 17px;
+    color: var(--text-secondary);
+    font-style: italic;
+    margin-top: 16px;
+    text-align: center;
+    opacity: 0.7;
+}
+
+/* === BLOCK 24: Shield / Design Stability Diagram === */
+.shield-diagram {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    margin-top: 36px;
+    justify-content: center;
+}
+.shield-core {
+    width: 260px;
+    height: 260px;
+    border-radius: 50%;
+    border: 3px solid var(--accent-amber);
+    background: rgba(255,179,0,0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: 26px;
+    color: var(--accent-amber);
+    text-align: center;
+    flex-shrink: 0;
+    box-shadow: 0 0 40px rgba(255,179,0,0.1);
+}
+.shield-principles {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+.shield-principle {
+    font-family: var(--font-body);
+    font-weight: 300;
+    font-size: 24px;
+    color: var(--text-primary);
+    line-height: 1.5;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.shield-principle .shield-marker {
+    width: 8px;
+    height: 8px;
+    background: var(--accent-amber);
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+/* === BLOCK 25: Stat Grid 2×2 (Costos slide 17) === */
+.stat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 36px;
+    margin-top: 40px;
+    max-width: 1600px;
+}
+.stat-card {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-left: 3px solid var(--accent-amber);
+    border-radius: 0 6px 6px 0;
+    padding: 36px;
+}
+.stat-card .stat-number {
+    font-size: 72px;
+    margin-bottom: 14px;
+}
+.stat-card .stat-label {
+    font-size: 24px;
+    line-height: 1.5;
+}
+
+/* === BLOCK 26: Factors List (Legacy risk, slide 29) === */
+.factors-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 24px;
+}
+.factors-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 18px;
+    margin-bottom: 22px;
+    font-size: 26px;
+    line-height: 1.6;
+    color: var(--text-primary);
+}
+.factors-list .factor-num {
+    width: 40px;
+    height: 40px;
+    border: 1px solid rgba(255,179,0,0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: 18px;
+    color: var(--accent-amber);
+    flex-shrink: 0;
+}
+
+/* === BLOCK 27: Intro Callout Grid (slide 4) === */
+.intro-callout {
+    background: rgba(255,179,0,0.03);
+    border-left: 3px solid var(--accent-amber);
+    border-radius: 0 6px 6px 0;
+    padding: 36px 40px;
+    margin-top: 32px;
+    max-width: 1100px;
+}
+.intro-callout p {
+    font-size: 28px;
+    font-style: italic;
+    line-height: 1.6;
+    color: var(--text-primary);
+    margin-bottom: 24px;
+}
+.ejes-grid {
+    display: flex;
+    gap: 28px;
+    margin-top: 20px;
+}
+.eje-card {
+    flex: 1;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,179,0,0.1);
+    border-radius: 6px;
+    padding: 24px 28px;
+}
+.eje-card .eje-name {
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: 22px;
+    color: var(--accent-amber);
+    margin-bottom: 10px;
+}
+.eje-card .eje-desc {
+    font-family: var(--font-body);
+    font-weight: 300;
+    font-size: 20px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+/* === BLOCK 28: Changelog List (slide 32) === */
+.changelog-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 24px;
+    max-width: 1500px;
+    columns: 2;
+    column-gap: 60px;
+}
+.changelog-list li {
+    font-family: var(--font-body);
+    font-weight: 300;
+    font-size: 22px;
+    color: var(--text-primary);
+    line-height: 1.6;
+    margin-bottom: 12px;
+    break-inside: avoid;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+.changelog-list .ch-tag {
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: 16px;
+    padding: 3px 10px;
+    border-radius: 3px;
+    flex-shrink: 0;
+    margin-top: 4px;
+}
+.ch-tag.corregir { background: rgba(255,179,0,0.12); color: var(--accent-amber); }
+.ch-tag.nueva { background: rgba(212,165,116,0.12); color: var(--accent-terracotta); }
+.ch-tag.eliminar { background: rgba(232,180,184,0.12); color: var(--accent-pink); }
+
+/* === BLOCK 29: Mini Timeline (Crisis 60s, slide 5) === */
+.mini-timeline {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    margin-top: 40px;
+    justify-content: center;
+}
+.mini-tl-node {
+    text-align: center;
+    max-width: 280px;
+}
+.mini-tl-year {
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: 18px;
+    color: var(--accent-amber);
+    margin-bottom: 12px;
+}
+.mini-tl-text {
+    font-family: var(--font-body);
+    font-weight: 300;
+    font-size: 18px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+.mini-tl-arrow {
+    font-size: 24px;
+    color: var(--accent-amber);
+    opacity: 0.4;
+    flex-shrink: 0;
+}
+
+/* === BLOCK 30: Content with amber accent dots === */
+.accent-dots {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+.accent-dots span {
+    width: 6px;
+    height: 6px;
+    background: var(--accent-amber);
+    border-radius: 50%;
+    opacity: 0.5;
+}
+</style>
+</head>
+<body>
+    <!-- Edit System -->
+    <div class="edit-hotzone"></div>
+    <button class="edit-toggle" id="editToggle" title="Modo edición (E)">✏️</button>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter" id="slideCounter">01 / 32</div>
+
+    <!-- Dot Navigation -->
+    <nav class="dot-nav" id="dotNav" aria-label="Navegación de diapositivas"></nav>
+
+    <div class="deck-viewport">
+        <main class="deck-stage" id="deckStage">
+
+<!-- =====================================================================
+     SLIDE 1 — Title (CORREGIDO: fecha mayo 2026)
+     ===================================================================== -->
+<section class="slide title-slide active" data-slide="1">
+    <div class="slide-content">
+        <p class="kicker reveal">IPS Gral. San Martín</p>
+        <h1 class="reveal">Ingeniería del Mantenimiento de<br><span class="accent">Software</span></h1>
+        <div class="title-rule reveal"></div>
+        <p class="title-sub reveal">La realidad del ciclo de vida del código</p>
+        <p class="title-footer reveal">Docente: Paula Ávila &nbsp;|&nbsp; Estudiantes: Santiago Cañal, Nicolás Paz Reyes, Valentino Aviani, Martín Moloeznik &nbsp;|&nbsp; mayo 2026</p>
+    </div>
+</section>
+
+<!-- =====================================================================
+     SLIDE 2 — Agenda (CORREGIDO: 6 items según secciones del informe)
+     ===================================================================== -->
+<section class="slide agenda-slide" data-slide="2">
+    <div class="slide-content">
+        <h2 class="reveal"><span class="accent">Agenda</span></h2>
+        <ul class="agenda-list">
+            <li class="reveal"><span class="num">01</span><span class="dot"></span> Definición y Síntesis Metodológica</li>
+            <li class="reveal"><span class="num">02</span><span class="dot"></span> Clasificación de Actividades</li>
+            <li class="reveal"><span class="num">03</span><span class="dot"></span> Métricas y Valores Estadísticos</li>
+            <li class="reveal"><span class="num">04</span><span class="dot"></span> Actores y Responsabilidades</li>
+            <li class="reveal"><span class="num">05</span><span class="dot"></span> Conceptos Técnicos Asociados</li>
+            <li class="reveal"><span class="num">06</span><span class="dot"></span> Conclusión</li>
+        </ul>
+    </div>
+</section>
+
+<!-- =====================================================================
+     SLIDE 3 — Section Header: ¿Qué es el Mantenimiento? (SIN CAMBIOS)
+     ===================================================================== -->
+<section class="slide section-header" data-slide="3">
+    <div class="slide-content">
+        <div class="section-number reveal-scale">01</div>
+        <h2 class="reveal">¿Qué es el <span class="accent">Mantenimiento</span>?</h2>
+    </div>
+</section>
+
+<!-- =====================================================================
+     SLIDE 4 — NUEVA: Introducción — por qué importa (L31-39)
+     ===================================================================== -->
+<section class="slide content-slide" data-slide="4">
+    <div class="slide-content">
+        <h2 class="reveal">Una Disciplina <span class="accent">Fundamental</span></h2>
+        <div class="title-rule reveal"></div>
+        <div class="intro-callout reveal">
+            <p>"El mantenimiento de software constituye una de las disciplinas fundamentales dentro de la ingeniería de software moderna. Lejos de ser una actividad secundaria o meramente correctiva, representa el conjunto de procesos sistemáticos que garantizan la supervivencia, la adaptabilidad y el valor estratégico de los sistemas informáticos a lo largo de su ciclo de vida operativo."</p>
+        </div>
+        <p class="text-secondary reveal" style="margin-top:32px; letter-spacing:0.08em; text-transform:uppercase;">Este informe aborda tres ejes:</p>
+        <div class="ejes-grid">
+            <div class="eje-card reveal">
+                <div class="eje-name">Definiciones</div>
+                <div class="eje-desc">Conceptos fundamentales y síntesis metodológica del mantenimiento</div>
+            </div>
+            <div class="eje-card reveal">
+                <div class="eje-name">Clasificación</div>
+                <div class="eje-desc">Taxonomía estandarizada de actividades y criterios</div>
+            </div>
+            <div class="eje-card reveal">
+                <div class="eje-name">Métricas + Roles + Conceptos</div>
+                <div class="eje-desc">Impacto económico, actores involucrados y fundamentos técnicos</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- =====================================================================
+     SLIDE 5 — NUEVA: Crisis de los 60s y ciclo continuo (L44-47)
+     ===================================================================== -->
+<section class="slide content-slide" data-slide="5">
+    <div class="slide-content">
+        <h2 class="reveal">La Crisis de Complejidad y el <span class="accent">Ciclo Continuo</span></h2>
+        <div class="title-rule reveal"></div>
+        <p class="reveal" style="line-height:1.7; max-width:1200px; margin-bottom:24px;">
+            Una vez consolidada la ingeniería de software a raíz de la <span style="color:var(--accent-amber);">crisis de complejidad de fines de los años 60</span>, se hizo evidente que la entrega inicial de un programa era apenas el comienzo de un ciclo continuo de modificaciones destinadas a asegurar su supervivencia y utilidad.
+        </p>
+        <div class="mini-timeline">
+            <div class="mini-tl-node reveal">
+                <div class="mini-tl-year">Fines de los 60</div>
+                <div class="mini-tl-text">Crisis de complejidad del software</div>
+            </div>
+            <span class="mini-tl-arrow reveal">⟶</span>
+            <div class="mini-tl-node reveal">
+                <div class="mini-tl-year">Entrega Inicial</div>
+                <div class="mini-tl-text">El programa se libera a producción</div>
+            </div>
+            <span class="mini-tl-arrow reveal">⟶</span>
+            <div class="mini-tl-node reveal">
+                <div class="mini-tl-year">Ciclo Continuo</div>
+                <div class="mini-tl-text">Modificaciones para asegurar supervivencia y utilidad</div>
+            </div>
+        </div>
+        <div class="callout-box reveal" style="margin-top:40px;">
+            <p>"La entrega inicial de un programa era apenas el comienzo."</p>
+        </div>
+    </div>
+</section>
+
+<!-- =====================================================================
+     SLIDE 6 — CORREGIDO: Definiciones institucionales (L52-61)
+     Reemplaza IEEE 1219 (1993) e ISO 12207 (1995) con normas correctas.
+     ===================================================================== -->
+<section class="slide content-slide" data-slide="6">
+    <div class="slide-content">
+        <h2 class="reveal">Las Definiciones <span class="accent">Institucionales</span></h2>
+        <div class="title-rule reveal"></div>
+        <div class="comparison-grid">
+            <div class="comparison-box reveal">
+                <h3>ANSI/IEEE 610.12 (1990)</h3>
+                <p>"Modificación de un producto de software después de su entrega al cliente o usuario para corregir defectos, para mejorar el rendimiento u otras propiedades deseables, o para adaptarlo a un cambio de entorno."</p>
+            </div>
+            <div class="comparison-box reveal">
+                <h3>ISO/IEC 14764 (2006)</h3>
+                <p>"Proceso que describe el esqueleto de actividades destinadas a modificar un producto de software existente preservando su integridad funcional y arquitectónica. Este proceso cubre todo el ciclo de vida del sistema, desde la planificación de la transición del desarrollo inicial hasta el retiro definitivo del producto."</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- =====================================================================
+     SLIDE 7 — CORREGIDO: Síntesis unificada (L65-68)
+     Se agrega "y funcionalidad" a la definición.
+     ===================================================================== -->
+<section class="slide quote-slide" data-slide="7">
+    <div class="slide-content">
+        <h2 class="reveal">Nuestra <span class="accent">Síntesis</span></h2>
+        <div class="quote-text reveal">
+            El mantenimiento de software es el proceso de ingeniería que, posterior a la entrega del sistema, modifica su código y arquitectura para corregir defectos, adaptarlo a entornos cambiantes y mejorar su mantenibilidad y funcionalidad, preservando su estabilidad operativa.
+        </div>
+    </div>
+</section>
+
+<!-- =====================================================================
+     SLIDE 8 — Section Header: Clasificación (SIN CAMBIOS)
+     ===================================================================== -->
+<section class="slide section-header" data-slide="8">
+    <div class="slide-content">
+        <div class="section-number reveal-scale">02</div>
+        <h2 class="reveal">Clasificación de <span class="accent">Actividades</span></h2>
+        <p class="section-subtitle reveal">Lientz y Swanson (1970s) + ISO/IEC 14764 e IEEE 1219</p>
+    </div>
+</section>
+
+<!-- =====================================================================
+     SLIDE 9 — CORREGIDO: Correctivo (L85-87)
+     Se eliminan los porcentajes de "origen de defectos" no presentes en el PDF.
+     ===================================================================== -->
+<section class="slide content-slide" data-slide="9">
+    <div class="slide-content">
+        <h2 class="reveal">Mantenimiento <span class="accent">Correctivo</span></h2>
+        <p class="text-secondary reveal" style="margin-top:4px;">(Reactivo)</p>
+        <div class="title-rule reveal"></div>
+        <div class="content-body">
+            <div class="def-item reveal">
+                <div class="marker"></div>
+                <div>
+                    <p class="def-text" style="line-height:1.6; max-width:1200px;">Modificaciones <span style="color:var(--accent-amber);">reactivas</span> obligadas por <span style="color:var(--accent-amber);">fallos de ejecución</span> detectados post-entrega, donde el programa no satisface los requerimientos iniciales. Elimina errores lógicos y restaura el estado óptimo original.</p>
+                </div>
+            </div>
+            <div class="def-item reveal">
+                <div class="marker"></div>
+                <div>
+                    <div class="def-label">Criterio</div>
+                    <p class="def-text">Reactivo ante fallas operacionales</p>
+                </div>
+            </div>
+            <div class="def-item reveal">
+                <div class="marker"></div>
+                <div>
+                    <div class="def-label">Foco del Cambio</div>
+                    <p class="def-text">Eliminación de errores lógicos</p>
+                </div>
+            </div>
+            <div class="def-item reveal">
+                <div class="marker"></div>
+                <div>
+                    <div class="def-label">Impacto Funcional</div>
+                    <p class="def-text">Restaura el estado óptimo original</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- =====================================================================
+     SLIDE 10 — CORREGIDO: Adaptativo (L88-91)
+     ===================================================================== -->
+<section class="slide content-slide" data-slide="10">
+    <div class="slide-content">
+        <h2 class="reveal">Mantenimiento <span class="accent">Adaptativo</span></h2>
+        <p class="text-secondary reveal" style="margin-top:4px;">(Reactivo)</p>
+        <div class="title-rule reveal"></div>
+        <div class="content-body">
+            <div class="def-item reveal">
+                <div class="marker"></div>
+                <div>
+                    <p class="def-text" style="line-height:1.6; max-width:1200px;">Cambios exigidos para mantener la operatividad del sistema cuando se producen alteraciones en su <span style="color:var(--accent-amber);">entorno tecnológico externo</span> (como actualizaciones del sistema operativo o cambios en bases de datos), sin modificar la funcionalidad percibida.</p>
+                </div>
+            </div>
+            <div class="def-item reveal">
+                <div class="marker"></div>
+                <div>
+                    <div class="def-label">Criterio</div>
+                    <p class="def-text">Reactivo ante evolución de TI</p>
+                </div>
+            </div>
+            <div class="def-item reveal">
+                <div class="marker"></div>
+                <div>
+                    <div class="def-label">Foco del Cambio</div>
+                    <p class="def-text">Migración de entornos (SO, bases de datos)</p>
+                </div>
+            </div>
+            <div class="def-item reveal">
+                <div class="marker"></div>
+                <div>
+                    <div class="def-label">Impacto Funcional</div>
+                    <p class="def-text">Usuario percibe idéntica funcionalidad</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- =====================================================================
+     SLIDE 11 — CORREGIDO: Perfectivo (L93-95)
+     ===================================================================== -->
+<section class="slide content-slide" data-slide="11">
+    <div class="slide-content">
+        <h2 class="reveal">Mantenimiento <span class="accent">Perfectivo</span></h2>
+        <p class="text-secondary reveal" style="margin-top:4px;">(Proactivo)</p>
+        <div class="title-rule reveal"></div>
+        <div class="content-body">
+            <div class="def-item reveal">
+                <div class="marker"></div>
+                <div>
+                    <p class="def-text" style="line-height:1.6; max-width:1200px;">Tareas <span style="color:var(--accent-amber);">proactivas</span> orientadas a expandir la funcionalidad solicitada por el negocio, optimizar el rendimiento de ejecución, depurar la documentación técnica o mejorar la experiencia del usuario.</p>
+                </div>
+            </div>
+            <div class="def-item reveal">
+                <div class="marker"></div>
+                <div>
+                    <div class="def-label">Criterio</div>
+                    <p class="def-text">Proactivo, alineado al negocio</p>
+                </div>
+            </div>
+            <div class="def-item reveal">
+                <div class="marker"></div>
+                <div>
+                    <div class="def-label">Foco del Cambio</div>
+                    <p class="def-text">Nuevas características, rendimiento, docs, UX</p>
+                </div>
+            </div>
+            <div class="def-item reveal">
+                <div class="marker"></div>
+                <div>
+                    <div class="def-label">Impacto Funcional</div>
+                    <p class="def-text">Expande capacidades del software</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- =====================================================================
+     SLIDE 12 — CORREGIDO: Preventivo (L100-105)
+     Se agrega "defectos latentes" y "antes de... fallas efectivas".
+     ===================================================================== -->
+<section class="slide content-slide" data-slide="12">
+    <div class="slide-content">
+        <h2 class="reveal">Mantenimiento <span class="accent">Preventivo</span></h2>
+        <p class="text-secondary reveal" style="margin-top:4px;">(Proactivo — ISO/IEC 14764 e IEEE 1219)</p>
+        <div class="title-rule reveal"></div>
+        <div class="content-body">
+            <div class="def-item reveal">
+                <div class="marker"></div>
+                <div>
+                    <p class="def-text" style="line-height:1.6; max-width:1200px;">Modificación proactiva del código fuente después de la entrega con el propósito de identificar y subsanar <span style="color:var(--accent-amber);">defectos latentes</span> o debilidades de diseño estructural.</p>
+                </div>
+            </div>
+            <div class="callout-box reveal">
+                <p>"...antes de que se conviertan en fallas efectivas en el entorno de producción."</p>
+            </div>
+            <div class="def-item reveal">
+                <div class="marker"></div>
+                <div>
+                    <div class="def-label">Criterio</div>
+                    <p class="def-text">Proactivo, control de calidad</p>
+                </div>
+            </div>
+            <div class="def-item reveal">
+                <div class="marker"></div>
+                <div>
+                    <div class="def-label">Foco del Cambio</div>
+                    <p class="def-text">Refactorización, deuda técnica</p>
+                </div>
+            </div>
+            <div class="def-item reveal">
+                <div class="marker"></div>
+                <div>
+                    <div class="def-label">Impacto Funcional</div>
+                    <p class="def-text">Mejora mantenibilidad futura</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- =====================================================================
+     SLIDE 13 — NUEVA: Cuadro 1 — Clasificación de tipos de mantenimiento
+     SVG table con datos de L111-128
+     ===================================================================== -->
+<section class="slide content-slide" data-slide="13">
+    <div class="slide-content">
+        <h2 class="reveal"><span class="accent">Cuadro 1:</span> Clasificación de los Tipos de Mantenimiento</h2>
+        <div class="title-rule reveal"></div>
+        <div class="svg-table-wrap reveal">
+            <svg width="1700" height="520" viewBox="0 0 1700 520" xmlns="http://www.w3.org/2000/svg">
+                <!-- Background -->
+                <rect x="0" y="0" width="1700" height="520" rx="6" fill="rgba(255,255,255,0.01)" stroke="rgba(255,255,255,0.06)"/>
+                <!-- Header row -->
+                <rect x="0" y="0" width="1700" height="60" fill="rgba(255,179,0,0.06)"/>
+                <line x1="0" y1="60" x2="1700" y2="60" stroke="rgba(255,179,0,0.15)"/>
+                <!-- Header text -->
+                <text x="180" y="38" font-family="IBM Plex Sans" font-weight="500" font-size="17" fill="#FFB300" text-anchor="middle">Tipo</text>
+                <text x="560" y="38" font-family="IBM Plex Sans" font-weight="500" font-size="17" fill="#FFB300" text-anchor="middle">Criterio</text>
+                <text x="980" y="38" font-family="IBM Plex Sans" font-weight="500" font-size="17" fill="#FFB300" text-anchor="middle">Foco del Cambio</text>
+                <text x="1380" y="38" font-family="IBM Plex Sans" font-weight="500" font-size="17" fill="#FFB300" text-anchor="middle">Impacto Funcional</text>
+                <!-- Column dividers -->
+                <line x1="360" y1="0" x2="360" y2="520" stroke="rgba(255,255,255,0.06)"/>
+                <line x1="760" y1="60" x2="760" y2="520" stroke="rgba(255,255,255,0.06)"/>
+                <line x1="1200" y1="60" x2="1200" y2="520" stroke="rgba(255,255,255,0.06)"/>
+                <!-- Row dividers -->
+                <line x1="0" y1="175" x2="1700" y2="175" stroke="rgba(255,255,255,0.04)"/>
+                <line x1="0" y1="290" x2="1700" y2="290" stroke="rgba(255,255,255,0.04)"/>
+                <line x1="0" y1="405" x2="1700" y2="405" stroke="rgba(255,255,255,0.04)"/>
+                <!-- Row 1: Correctivo -->
+                <text x="180" y="110" font-family="IBM Plex Sans" font-weight="500" font-size="20" fill="#e8e4df" text-anchor="middle">Correctivo</text>
+                <text x="560" y="100" font-family="IBM Plex Sans" font-weight="300" font-size="18" fill="#e8e4df" text-anchor="middle">Reactivo ante fallas</text>
+                <text x="560" y="126" font-family="IBM Plex Sans" font-weight="300" font-size="18" fill="#e8e4df" text-anchor="middle">operacionales</text>
+                <text x="980" y="100" font-family="IBM Plex Sans" font-weight="300" font-size="18" fill="#e8e4df" text-anchor="middle">Eliminación de</text>
+                <text x="980" y="126" font-family="IBM Plex Sans" font-weight="300" font-size="18" fill="#e8e4df" text-anchor="middle">errores lógicos</text>
+                <text x="1380" y="100" font-family="IBM Plex Sans" font-weight="300" font-size="18" fill="#e8e4df" text-anchor="middle">Restaura el estado</text>
+                <text x="1380" y="126" font-family="IBM Plex Sans" font-weight="300" font-size="18" fill="#e8e4df" text-anchor="middle">óptimo original</text>
+                <!-- Row 2: Adaptativo -->
+                <text x="180" y="225" font-family="IBM Plex Sans" font-weight="500" font-size="20" fill="#e8e4df" text-anchor="middle">Adaptativo</text>
+                <text x="560" y="215" font-family="IBM Plex Sans" font-weight="300" font-size="18" fill="#e8e4df" text-anchor="middle">Reactivo ante</text>
+                <text x="560" y="241" font-family="IBM Plex Sans" font-weight="300" font-size="18" fill="#e8e4df" text-anchor="middle">evolución de TI</text>
+                <text x="980" y="215" font-family="IBM Plex Sans" font-weight="300" font-size="18" fill="#e8e4df" text-anchor="middle">Migración de</text>
+                <text x="980" y="241" font-family="IBM Plex Sans" font-weight="300" font-size="18" fill="#e8e4df" text-anchor="middle">entornos</text>
+                <text x="1380" y="215" font-family="IBM Plex Sans" font-weight="300" font-size="18" fill="#e8e4df" text-anchor="middle">Usuario percibe</text>
+                <text x="1380" y="241" font-family="IBM Plex Sans" font-weight="300" font-size="18" fill="#e8e4df" text-anchor="middle">idéntica funcionalidad</text>
+                <!-- Row 3: Perfectivo -->
+                <text x="180" y="340" font-family="IBM Plex Sans" font-weight="500" font-size="20" fill="#e8e4df" text-anchor="middle">Perfectivo</text>
+                <text x="560" y="330" font-family="IBM Plex Sans" font-weight="300" font-size="18" fill="#e8e4df" text-anchor="middle">Proactivo, alineado</text>
+                <text x="560" y="356" font-family="IBM Plex Sans" font-weight="300" font-size="18" fill="#e8e4df" text-anchor="middle">al negocio</text>
+                <text x="980" y="330" font-family="IBM Plex Sans" font-weight="300" font-size="18" fill="#e8e4df" text-anchor="middle">Nuevas características</text>
+                <text x="980" y="356" font-family="IBM Plex Sans" font-weight="300" font-size="18" fill="#e8e4df" text-anchor="middle">o mejoras</text>
+                <text x="1380" y="330" font-family="IBM Plex Sans" font-weight="300" font-size="18" fill="#e8e4df" text-anchor="middle">Expande capacidades</text>
+                <text x="1380" y="356" font-family="IBM Plex Sans" font-weight="300" font-size="18" fill="#e8e4df" text-anchor="middle">del software</text>
+                <!-- Row 4: Preventivo -->
+                <text x="180" y="455" font-family="IBM Plex Sans" font-weight="500" font-size="20" fill="#e8e4df" text-anchor="middle">Preventivo</text>
+                <text x="560" y="445" font-family="IBM Plex Sans" font-weight="300" font-size="18" fill="#e8e4df" text-anchor="middle">Proactivo, control</text>
+                <text x="560" y="471" font-family="IBM Plex Sans" font-weight="300" font-size="18" fill="#e8e4df" text-anchor="middle">de calidad</text>
+                <text x="980" y="445" font-family="IBM Plex Sans" font-weight="300" font-size="18" fill="#e8e4df" text-anchor="middle">Refactorización,</text>
+                <text x="980" y="471" font-family="IBM Plex Sans" font-weight="300" font-size="18" fill="#e8e4df" text-anchor="middle">deuda técnica</text>
+                <text x="1380" y="445" font-family="IBM Plex Sans" font-weight="300" font-size="18" fill="#e8e4df" text-anchor="middle">Mejora mantenibilidad</text>
+                <text x="1380" y="471" font-family="IBM Plex Sans" font-weight="300" font-size="18" fill="#e8e4df" text-anchor="middle">futura</text>
+            </svg>
+        </div>
+        <p class="svg-table-caption reveal">Cuadro 1: Clasificación de los tipos de mantenimiento.</p>
+    </div>
+</section>
+
+<!-- =====================================================================
+     SLIDE 14 — Section Header: Métricas (SIN CAMBIOS)
+     ===================================================================== -->
+<section class="slide section-header" data-slide="14">
+    <div class="slide-content">
+        <div class="section-number reveal-scale">03</div>
+        <h2 class="reveal">El Impacto <span class="accent">Financiero</span> y Esfuerzo</h2>
+    </div>
+</section>
+
+<!-- =====================================================================
+     SLIDE 15 — CORREGIDO: Evolución Histórica (L142-150)
+     Porcentajes corregidos + drivers por época
+     ===================================================================== -->
+<section class="slide content-slide" data-slide="15">
+    <div class="slide-content">
+        <h2 class="reveal">La <span class="accent">Evolución</span> Histórica</h2>
+        <div class="title-rule reveal"></div>
+        <div class="timeline-row">
+            <div class="timeline-item reveal">
+                <div class="timeline-era">1970s</div>
+                <div class="timeline-bar-wrap">
+                    <div class="timeline-bar-label">Desarrollo 60–70%</div>
+                    <div class="timeline-bar-track"><div class="timeline-bar-fill" style="width:65%"></div></div>
+                    <div class="timeline-bar-label">Mantenimiento 30–40%</div>
+                    <div class="timeline-bar-track"><div class="timeline-bar-fill" style="width:35%"></div></div>
+                </div>
+                <p style="color:var(--accent-terracotta); margin-top:8px; line-height:1.4;">Hardware como mayor inversión</p>
+            </div>
+            <div class="timeline-item reveal">
+                <div class="timeline-era">1990s</div>
+                <div class="timeline-bar-wrap">
+                    <div class="timeline-bar-label">Desarrollo 25–35%</div>
+                    <div class="timeline-bar-track"><div class="timeline-bar-fill" style="width:30%"></div></div>
+                    <div class="timeline-bar-label">Mantenimiento 65–75%</div>
+                    <div class="timeline-bar-track"><div class="timeline-bar-fill" style="width:70%"></div></div>
+                </div>
+                <p style="color:var(--accent-terracotta); margin-top:8px; line-height:1.4;">ERP multi-módulo, crisis Y2K</p>
+            </div>
+            <div class="timeline-item reveal">
+                <div class="timeline-era">2020s</div>
+                <div class="timeline-bar-wrap">
+                    <div class="timeline-bar-label">Desarrollo 10–20%</div>
+                    <div class="timeline-bar-track"><div class="timeline-bar-fill" style="width:15%"></div></div>
+                    <div class="timeline-bar-label">Mantenimiento 80–90%</div>
+                    <div class="timeline-bar-track"><div class="timeline-bar-fill" style="width:85%"></div></div>
+                </div>
+                <p style="color:var(--accent-terracotta); margin-top:8px; line-height:1.4;">Legacy crisis, SaaS, deuda técnica</p>
+            </div>
+        </div>
+        <p class="svg-table-caption reveal">Cuadro 2: Relación esfuerzo desarrollo vs. mantenimiento.</p>
+    </div>
+</section>
+
+<!-- =====================================================================
+     SLIDE 16 — CORREGIDO: Distribución del Esfuerzo (L161-171)
+     Los 4 tipos con rangos + Origen del Costo. Sin "Frazer 1992".
+     ===================================================================== -->
+<section class="slide content-slide" data-slide="16">
+    <div class="slide-content">
+        <h2 class="reveal">Distribución del <span class="accent">Esfuerzo</span> por Tipo</h2>
+        <div class="title-rule reveal"></div>
+        <div class="svg-table-wrap reveal">
+            <svg width="1500" height="330" viewBox="0 0 1500 330" xmlns="http://www.w3.org/2000/svg">
+                <rect x="0" y="0" width="1500" height="330" rx="6" fill="rgba(255,255,255,0.01)" stroke="rgba(255,255,255,0.06)"/>
+                <!-- Header -->
+                <rect x="0" y="0" width="1500" height="52" fill="rgba(255,179,0,0.06)"/>
+                <line x1="0" y1="52" x2="1500" y2="52" stroke="rgba(255,179,0,0.15)"/>
+                <text x="200" y="32" font-family="IBM Plex Sans" font-weight="500" font-size="16" fill="#FFB300" text-anchor="middle">Tipo</text>
+                <text x="550" y="32" font-family="IBM Plex Sans" font-weight="500" font-size="16" fill="#FFB300" text-anchor="middle">% Esfuerzo</text>
+                <text x="1050" y="32" font-family="IBM Plex Sans" font-weight="500" font-size="16" fill="#FFB300" text-anchor="middle">Origen del Costo</text>
+                <!-- Column dividers -->
+                <line x1="380" y1="0" x2="380" y2="330" stroke="rgba(255,255,255,0.06)"/>
+                <line x1="720" y1="52" x2="720" y2="330" stroke="rgba(255,255,255,0.06)"/>
+                <!-- Row dividers -->
+                <line x1="0" y1="121" x2="1500" y2="121" stroke="rgba(255,255,255,0.04)"/>
+                <line x1="0" y1="190" x2="1500" y2="190" stroke="rgba(255,255,255,0.04)"/>
+                <line x1="0" y1="259" x2="1500" y2="259" stroke="rgba(255,255,255,0.04)"/>
+                <!-- Perfectivo -->
+                <text x="200" y="90" font-family="IBM Plex Sans" font-weight="500" font-size="20" fill="#e8e4df" text-anchor="middle">Perfectivo</text>
+                <text x="550" y="90" font-family="IBM Plex Sans" font-weight="500" font-size="26" fill="#FFB300" text-anchor="middle">25% – 50%</text>
+                <text x="1050" y="90" font-family="IBM Plex Sans" font-weight="300" font-size="19" fill="#e8e4df" text-anchor="middle">Nuevos requerimientos de negocio</text>
+                <!-- Adaptativo -->
+                <text x="200" y="159" font-family="IBM Plex Sans" font-weight="500" font-size="20" fill="#e8e4df" text-anchor="middle">Adaptativo</text>
+                <text x="550" y="159" font-family="IBM Plex Sans" font-weight="500" font-size="26" fill="#FFB300" text-anchor="middle">15% – 50%</text>
+                <text x="1050" y="159" font-family="IBM Plex Sans" font-weight="300" font-size="19" fill="#e8e4df" text-anchor="middle">Actualizaciones de plataformas</text>
+                <!-- Correctivo -->
+                <text x="200" y="228" font-family="IBM Plex Sans" font-weight="500" font-size="20" fill="#e8e4df" text-anchor="middle">Correctivo</text>
+                <text x="550" y="228" font-family="IBM Plex Sans" font-weight="500" font-size="26" fill="#FFB300" text-anchor="middle">20% – 25%</text>
+                <text x="1050" y="228" font-family="IBM Plex Sans" font-weight="300" font-size="19" fill="#e8e4df" text-anchor="middle">Diagnóstico de fallas operativas</text>
+                <!-- Preventivo -->
+                <text x="200" y="297" font-family="IBM Plex Sans" font-weight="500" font-size="20" fill="#e8e4df" text-anchor="middle">Preventivo</text>
+                <text x="550" y="297" font-family="IBM Plex Sans" font-weight="500" font-size="26" fill="#FFB300" text-anchor="middle">4% – 15%</text>
+                <text x="1050" y="297" font-family="IBM Plex Sans" font-weight="300" font-size="19" fill="#e8e4df" text-anchor="middle">Saneamiento arquitectónico</text>
+            </svg>
+        </div>
+        <p class="svg-table-caption reveal">Cuadro 3: Distribución del esfuerzo por tipo de mantenimiento.</p>
+    </div>
+</section>
+
+<!-- =====================================================================
+     SLIDE 17 — CORREGIDO: Costos y Gestión (L179-197)
+     2×2 stat grid con KLO, Regla 15-25%, Equipo, Downtime
+     ===================================================================== -->
+<section class="slide content-slide" data-slide="17">
+    <div class="slide-content">
+        <h2 class="reveal">El <span class="accent">Costo</span> del Negocio</h2>
+        <div class="title-rule reveal"></div>
+        <div class="stat-grid">
+            <div class="stat-card reveal">
+                <div class="stat-number">55%–80%</div>
+                <p class="stat-label"><strong style="color:var(--accent-amber);">Presupuesto KLO</strong><br>("Keeping the Lights On"): las grandes corporaciones gastan entre el 55% y el 80% de su presupuesto global de TI en mantener operativos sus sistemas heredados, dejando un margen estrecho para la innovación.</p>
+            </div>
+            <div class="stat-card reveal">
+                <div class="stat-number">15%–25%</div>
+                <p class="stat-label"><strong style="color:var(--accent-amber);">Regla del 15–25% anual</strong><br>Presupuesto requerido para mantener una aplicación en estado óptimo equivale al 15%–25% de su costo de desarrollo inicial. Con deuda técnica elevada: 30%–40%.</p>
+            </div>
+            <div class="stat-card reveal">
+                <div class="stat-number">$40K–$80K</div>
+                <p class="stat-label"><strong style="color:var(--accent-amber);">Costo mensual de equipos</strong><br>Un equipo ágil mediano (4–6 ingenieros full-time) representa un desembolso de $40,000 a $80,000 mensuales.</p>
+            </div>
+            <div class="stat-card reveal">
+                <div class="stat-number">$2,300–$9,000<span style="font-size:28px;">/min</span></div>
+                <p class="stat-label"><strong style="color:var(--accent-amber);">Tiempo de inactividad</strong><br>Gran corporación: $2,300–$9,000/min. Pequeña empresa: $137–$427/min.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- =====================================================================
+     SLIDE 18 — Section Header: Actores (CORREGIDO: sin "Basili et al.")
+     ===================================================================== -->
+<section class="slide section-header" data-slide="18">
+    <div class="slide-content">
+        <div class="section-number reveal-scale">04</div>
+        <h2 class="reveal">Actores y <span class="accent">Responsabilidades</span></h2>
+        <p class="section-subtitle reveal">Cuadro 4: Actores y tareas de mantenimiento</p>
+    </div>
+</section>
+
+<!-- =====================================================================
+     SLIDE 19 — NUEVA: Cuadro 4 — Actores del mantenimiento (L209-232)
+     ===================================================================== -->
+<section class="slide content-slide" data-slide="19">
+    <div class="slide-content">
+        <h2 class="reveal"><span class="accent">Cuadro 4:</span> Actores del Mantenimiento</h2>
+        <div class="title-rule reveal"></div>
+        <div class="svg-table-wrap reveal">
+            <svg width="1720" height="580" viewBox="0 0 1720 580" xmlns="http://www.w3.org/2000/svg">
+                <rect x="0" y="0" width="1720" height="580" rx="6" fill="rgba(255,255,255,0.01)" stroke="rgba(255,255,255,0.06)"/>
+                <!-- Header -->
+                <rect x="0" y="0" width="1720" height="48" fill="rgba(255,179,0,0.06)"/>
+                <line x1="0" y1="48" x2="1720" y2="48" stroke="rgba(255,179,0,0.15)"/>
+                <text x="190" y="30" font-family="IBM Plex Sans" font-weight="500" font-size="15" fill="#FFB300" text-anchor="middle">Actor</text>
+                <text x="520" y="30" font-family="IBM Plex Sans" font-weight="500" font-size="15" fill="#FFB300" text-anchor="middle">Tarea Clave</text>
+                <text x="800" y="30" font-family="IBM Plex Sans" font-weight="500" font-size="15" fill="#FFB300" text-anchor="middle">Tipos</text>
+                <text x="1320" y="30" font-family="IBM Plex Sans" font-weight="500" font-size="15" fill="#FFB300" text-anchor="middle">Descripción</text>
+                <!-- Column dividers -->
+                <line x1="340" y1="0" x2="340" y2="580" stroke="rgba(255,255,255,0.06)"/>
+                <line x1="680" y1="48" x2="680" y2="580" stroke="rgba(255,255,255,0.06)"/>
+                <line x1="930" y1="48" x2="930" y2="580" stroke="rgba(255,255,255,0.06)"/>
+                <!-- Row dividers -->
+                <line x1="0" y1="136" x2="1720" y2="136" stroke="rgba(255,255,255,0.04)"/>
+                <line x1="0" y1="224" x2="1720" y2="224" stroke="rgba(255,255,255,0.04)"/>
+                <line x1="0" y1="312" x2="1720" y2="312" stroke="rgba(255,255,255,0.04)"/>
+                <line x1="0" y1="400" x2="1720" y2="400" stroke="rgba(255,255,255,0.04)"/>
+                <line x1="0" y1="488" x2="1720" y2="488" stroke="rgba(255,255,255,0.04)"/>
+                <!-- Row 1: Resp. Mant — Gestión -->
+                <text x="190" y="85" font-family="IBM Plex Sans" font-weight="500" font-size="17" fill="#e8e4df" text-anchor="middle">Resp. de Mant.</text>
+                <text x="190" y="108" font-family="IBM Plex Sans" font-weight="300" font-size="14" fill="#9a9590" text-anchor="middle">(Gestión)</text>
+                <text x="520" y="85" font-family="IBM Plex Sans" font-weight="300" font-size="16" fill="#e8e4df" text-anchor="middle">Gestión de Solicitudes</text>
+                <text x="520" y="108" font-family="IBM Plex Sans" font-weight="300" font-size="15" fill="#FFB300" text-anchor="middle">(MR/PR)</text>
+                <text x="800" y="96" font-family="IBM Plex Sans" font-weight="300" font-size="15" fill="#e8e4df" text-anchor="middle">Todos</text>
+                <text x="1320" y="85" font-family="IBM Plex Sans" font-weight="300" font-size="16" fill="#e8e4df" text-anchor="middle">Prioriza colas de trabajo y</text>
+                <text x="1320" y="108" font-family="IBM Plex Sans" font-weight="300" font-size="16" fill="#e8e4df" text-anchor="middle">asigna tareas con Scrum o Kanban</text>
+                <!-- Row 2: Resp. Mant — Transición -->
+                <text x="190" y="173" font-family="IBM Plex Sans" font-weight="500" font-size="17" fill="#e8e4df" text-anchor="middle">Resp. de Mant.</text>
+                <text x="190" y="196" font-family="IBM Plex Sans" font-weight="300" font-size="14" fill="#9a9590" text-anchor="middle">(Transición)</text>
+                <text x="520" y="185" font-family="IBM Plex Sans" font-weight="300" font-size="16" fill="#e8e4df" text-anchor="middle">Planificación de Transición</text>
+                <text x="800" y="185" font-family="IBM Plex Sans" font-weight="300" font-size="15" fill="#e8e4df" text-anchor="middle">Todos</text>
+                <text x="1320" y="173" font-family="IBM Plex Sans" font-weight="300" font-size="16" fill="#e8e4df" text-anchor="middle">Evalúa documentación y pruebas</text>
+                <text x="1320" y="196" font-family="IBM Plex Sans" font-weight="300" font-size="16" fill="#e8e4df" text-anchor="middle">para pasar de desarrollo a mantenimiento</text>
+                <!-- Row 3: Analista -->
+                <text x="190" y="261" font-family="IBM Plex Sans" font-weight="500" font-size="17" fill="#e8e4df" text-anchor="middle">Analista de Mant.</text>
+                <text x="520" y="261" font-family="IBM Plex Sans" font-weight="300" font-size="16" fill="#e8e4df" text-anchor="middle">Análisis de Impacto</text>
+                <text x="520" y="284" font-family="IBM Plex Sans" font-weight="300" font-size="16" fill="#e8e4df" text-anchor="middle">y Viabilidad</text>
+                <text x="800" y="261" font-family="IBM Plex Sans" font-weight="300" font-size="15" fill="#e8e4df" text-anchor="middle">Correctivo,</text>
+                <text x="800" y="281" font-family="IBM Plex Sans" font-weight="300" font-size="15" fill="#e8e4df" text-anchor="middle">Adaptativo,</text>
+                <text x="800" y="301" font-family="IBM Plex Sans" font-weight="300" font-size="15" fill="#e8e4df" text-anchor="middle">Perfectivo</text>
+                <text x="1320" y="261" font-family="IBM Plex Sans" font-weight="300" font-size="16" fill="#e8e4df" text-anchor="middle">Evalúa componentes afectados</text>
+                <text x="1320" y="284" font-family="IBM Plex Sans" font-weight="300" font-size="16" fill="#e8e4df" text-anchor="middle">para prevenir regresiones</text>
+                <!-- Row 4: Programador — Parches -->
+                <text x="190" y="349" font-family="IBM Plex Sans" font-weight="500" font-size="17" fill="#e8e4df" text-anchor="middle">Programador</text>
+                <text x="190" y="372" font-family="IBM Plex Sans" font-weight="300" font-size="14" fill="#9a9590" text-anchor="middle">/ Técnico</text>
+                <text x="520" y="361" font-family="IBM Plex Sans" font-weight="300" font-size="16" fill="#e8e4df" text-anchor="middle">Codificación de Parches</text>
+                <text x="800" y="350" font-family="IBM Plex Sans" font-weight="300" font-size="15" fill="#e8e4df" text-anchor="middle">Correctivo,</text>
+                <text x="800" y="370" font-family="IBM Plex Sans" font-weight="300" font-size="15" fill="#e8e4df" text-anchor="middle">Preventivo,</text>
+                <text x="800" y="390" font-family="IBM Plex Sans" font-weight="300" font-size="15" fill="#e8e4df" text-anchor="middle">Perfectivo</text>
+                <text x="1320" y="350" font-family="IBM Plex Sans" font-weight="300" font-size="16" fill="#e8e4df" text-anchor="middle">Hotfixes, actualización de</text>
+                <text x="1320" y="373" font-family="IBM Plex Sans" font-weight="300" font-size="16" fill="#e8e4df" text-anchor="middle">dependencias y optimizaciones</text>
+                <!-- Row 5: Programador — Pruebas -->
+                <text x="190" y="437" font-family="IBM Plex Sans" font-weight="500" font-size="17" fill="#e8e4df" text-anchor="middle">Programador</text>
+                <text x="190" y="460" font-family="IBM Plex Sans" font-weight="300" font-size="14" fill="#9a9590" text-anchor="middle">/ Técnico</text>
+                <text x="520" y="449" font-family="IBM Plex Sans" font-weight="300" font-size="16" fill="#e8e4df" text-anchor="middle">Pruebas de Regresión</text>
+                <text x="800" y="449" font-family="IBM Plex Sans" font-weight="300" font-size="15" fill="#e8e4df" text-anchor="middle">Todos</text>
+                <text x="1320" y="437" font-family="IBM Plex Sans" font-weight="300" font-size="16" fill="#e8e4df" text-anchor="middle">Pruebas automatizadas para validar</text>
+                <text x="1320" y="460" font-family="IBM Plex Sans" font-weight="300" font-size="16" fill="#e8e4df" text-anchor="middle">comportamiento histórico</text>
+                <!-- Row 6: Programador — Migración -->
+                <text x="190" y="527" font-family="IBM Plex Sans" font-weight="500" font-size="17" fill="#e8e4df" text-anchor="middle">Programador</text>
+                <text x="190" y="550" font-family="IBM Plex Sans" font-weight="300" font-size="14" fill="#9a9590" text-anchor="middle">/ Técnico</text>
+                <text x="520" y="539" font-family="IBM Plex Sans" font-weight="300" font-size="16" fill="#e8e4df" text-anchor="middle">Migración y Despliegue</text>
+                <text x="800" y="539" font-family="IBM Plex Sans" font-weight="300" font-size="15" fill="#e8e4df" text-anchor="middle">Adaptativo</text>
+                <text x="1320" y="527" font-family="IBM Plex Sans" font-weight="300" font-size="16" fill="#e8e4df" text-anchor="middle">Traslado del sistema a nuevos</text>
+                <text x="1320" y="550" font-family="IBM Plex Sans" font-weight="300" font-size="16" fill="#e8e4df" text-anchor="middle">servidores o nubes</text>
+            </svg>
+        </div>
+        <p class="svg-table-caption reveal">Cuadro 4: Actores del mantenimiento y sus responsabilidades.</p>
+    </div>
+</section>
+
+<!-- =====================================================================
+     SLIDE 20 — CORREGIDO: Responsable de Mantenimiento — Gestión (L211-214)
+     ===================================================================== -->
+<section class="slide content-slide" data-slide="20">
+    <div class="slide-content">
+        <div class="role-header reveal">
+            <p class="role-tag">Rol 01</p>
+        </div>
+        <h2 class="reveal">Responsable de <span class="accent">Mantenimiento</span></h2>
+        <p class="text-secondary reveal" style="margin-top:4px;">Gestión de Solicitudes (MR/PR)</p>
+        <div class="title-rule reveal"></div>
+        <ul class="role-tasks">
+            <li class="reveal"><span class="task-marker"></span>Prioriza colas de trabajo y asigna tareas con <span style="color:var(--accent-amber);">Scrum o Kanban</span></li>
+            <li class="reveal"><span class="task-marker"></span>Gestiona las solicitudes de modificación (MR) y reportes de problemas (PR)</li>
+            <li class="reveal"><span class="task-marker"></span>Coordina la comunicación entre stakeholders y el equipo técnico</li>
+        </ul>
+        <p class="text-secondary reveal" style="margin-top:24px; font-style:italic;">Tipos: Todos (Correctivo, Adaptativo, Perfectivo, Preventivo)</p>
+    </div>
+</section>
+
+<!-- =====================================================================
+     SLIDE 21 — NUEVA: Planificación de Transición (L215-217)
+     ===================================================================== -->
+<section class="slide content-slide" data-slide="21">
+    <div class="slide-content">
+        <div class="role-header reveal">
+            <p class="role-tag">Rol 01 — Continuación</p>
+        </div>
+        <h2 class="reveal">Planificación de <span class="accent">Transición</span></h2>
+        <p class="text-secondary reveal" style="margin-top:4px;">Responsable de Mantenimiento</p>
+        <div class="title-rule reveal"></div>
+        <div class="callout-box reveal" style="max-width:1000px;">
+            <p>"Evalúa documentación y pruebas para pasar de desarrollo a mantenimiento."</p>
+        </div>
+        <ul class="role-tasks">
+            <li class="reveal"><span class="task-marker"></span>Revisa que la documentación técnica esté completa antes de aceptar el sistema</li>
+            <li class="reveal"><span class="task-marker"></span>Verifica que existan <span style="color:var(--accent-amber);">pruebas automatizadas</span> para validar el comportamiento base</li>
+            <li class="reveal"><span class="task-marker"></span>Asegura la transferencia de conocimiento del equipo de desarrollo al de mantenimiento</li>
+        </ul>
+        <p class="text-secondary reveal" style="margin-top:24px; font-style:italic;">Tipos: Todos</p>
+    </div>
+</section>
+
+<!-- =====================================================================
+     SLIDE 22 — CORREGIDO: Analista de Mantenimiento (L218-221)
+     ===================================================================== -->
+<section class="slide content-slide" data-slide="22">
+    <div class="slide-content">
+        <div class="role-header reveal">
+            <p class="role-tag">Rol 02</p>
+        </div>
+        <h2 class="reveal"><span class="accent">Analista</span> de Mantenimiento</h2>
+        <p class="text-secondary reveal" style="margin-top:4px;">Análisis de Impacto y Viabilidad</p>
+        <div class="title-rule reveal"></div>
+        <ul class="role-tasks">
+            <li class="reveal"><span class="task-marker"></span>Evalúa los <span style="color:var(--accent-amber);">componentes afectados</span> por cada solicitud de cambio</li>
+            <li class="reveal"><span class="task-marker"></span>Identifica dependencias ocultas para <span style="color:var(--accent-amber);">prevenir regresiones</span></li>
+            <li class="reveal"><span class="task-marker"></span>Estima el esfuerzo, costo y riesgo de cada modificación propuesta</li>
+        </ul>
+        <p class="text-secondary reveal" style="margin-top:24px; font-style:italic;">Tipos: Correctivo, Adaptativo, Perfectivo</p>
+    </div>
+</section>
+
+<!-- =====================================================================
+     SLIDE 23 — CORREGIDO: Programador — Parches + Regresión (L222-228)
+     ===================================================================== -->
+<section class="slide content-slide" data-slide="23">
+    <div class="slide-content">
+        <div class="role-header reveal">
+            <p class="role-tag">Rol 03</p>
+        </div>
+        <h2 class="reveal"><span class="accent">Programador</span> / Técnico</h2>
+        <p class="text-secondary reveal" style="margin-top:4px;">Codificación y Validación</p>
+        <div class="title-rule reveal"></div>
+        <div class="two-col" style="margin-top:24px;">
+            <div>
+                <p class="reveal" style="font-weight:500; color:var(--accent-amber); letter-spacing:0.08em; margin-bottom:16px;">CODIFICACIÓN DE PARCHES</p>
+                <ul class="role-tasks">
+                    <li class="reveal"><span class="task-marker"></span><span style="color:var(--accent-amber);">Hotfixes</span>: correcciones urgentes en producción</li>
+                    <li class="reveal"><span class="task-marker"></span>Actualización de dependencias y librerías</li>
+                    <li class="reveal"><span class="task-marker"></span>Optimizaciones de rendimiento y refactorización</li>
+                </ul>
+            </div>
+            <div>
+                <p class="reveal" style="font-weight:500; color:var(--accent-amber); letter-spacing:0.08em; margin-bottom:16px;">PRUEBAS DE REGRESIÓN</p>
+                <ul class="role-tasks">
+                    <li class="reveal"><span class="task-marker"></span><span style="color:var(--accent-amber);">Pruebas automatizadas</span> para validar comportamiento histórico</li>
+                    <li class="reveal"><span class="task-marker"></span>Verifica que ningún cambio rompa funcionalidad existente</li>
+                    <li class="reveal"><span class="task-marker"></span>Mantiene suites de test como documentación viva del sistema</li>
+                </ul>
+            </div>
+        </div>
+        <p class="text-secondary reveal" style="margin-top:20px; font-style:italic;">Tipos parches: Correctivo, Preventivo, Perfectivo &nbsp;|&nbsp; Tipos pruebas: Todos</p>
+    </div>
+</section>
+
+<!-- =====================================================================
+     SLIDE 24 — NUEVA: Migración y Despliegue (L229-231)
+     ===================================================================== -->
+<section class="slide content-slide" data-slide="24">
+    <div class="slide-content">
+        <div class="role-header reveal">
+            <p class="role-tag">Rol 03 — Continuación</p>
+        </div>
+        <h2 class="reveal">Migración y <span class="accent">Despliegue</span></h2>
+        <p class="text-secondary reveal" style="margin-top:4px;">Programador / Técnico</p>
+        <div class="title-rule reveal"></div>
+        <div class="callout-box reveal" style="max-width:1000px;">
+            <p>"Traslado del sistema a nuevos servidores o nubes."</p>
+        </div>
+        <ul class="role-tasks">
+            <li class="reveal"><span class="task-marker"></span>Migración de infraestructura on-premise a entornos cloud</li>
+            <li class="reveal"><span class="task-marker"></span>Cambio de servidores físicos o virtuales por obsolescencia o escalado</li>
+            <li class="reveal"><span class="task-marker"></span>Actualización de stacks tecnológicos (lenguajes, frameworks, OS)</li>
+        </ul>
+        <p class="text-secondary reveal" style="margin-top:24px; font-style:italic;">Tipo: Adaptativo</p>
+    </div>
+</section>
+
+<!-- =====================================================================
+     SLIDE 25 — Section Header: Ingeniería Dura (SIN CAMBIOS)
+     ===================================================================== -->
+<section class="slide section-header" data-slide="25">
+    <div class="slide-content">
+        <div class="section-number reveal-scale">05</div>
+        <h2 class="reveal">Ingeniería <span class="accent">Dura</span> y Consecuencias</h2>
+    </div>
+</section>
+
+<!-- =====================================================================
+     SLIDE 26 — CORREGIDO: Mantenibilidad (L249-263)
+     Cada píldora incluye micro-definición, no solo el nombre.
+     ===================================================================== -->
+<section class="slide content-slide" data-slide="26">
+    <div class="slide-content">
+        <h2 class="reveal"><span class="accent">Mantenibilidad</span> (ISO/IEC 9126)</h2>
+        <p class="text-secondary reveal" style="margin-top:4px; max-width:1200px;">Maintainability</p>
+        <p class="text-secondary reveal" style="margin-top:12px; max-width:1200px;">Característica cualitativa del software que describe la facilidad y velocidad con la que un sistema puede modificarse después de su entrega operacional.</p>
+        <div class="title-rule reveal"></div>
+        <div class="pill-grid" style="gap:20px;">
+            <div class="pill-def reveal">
+                <div class="pill-name">Analizabilidad</div>
+                <div class="pill-desc">Capacidad de diagnosticar causas de fallo.</div>
+            </div>
+            <div class="pill-def reveal">
+                <div class="pill-name">Cambiabilidad</div>
+                <div class="pill-desc">Facilidad de implementar modificaciones.</div>
+            </div>
+            <div class="pill-def reveal">
+                <div class="pill-name">Estabilidad</div>
+                <div class="pill-desc">Resistencia a efectos secundarios no deseados.</div>
+            </div>
+            <div class="pill-def reveal">
+                <div class="pill-name">Testabilidad</div>
+                <div class="pill-desc">Verificación eficiente de cambios.</div>
+            </div>
+            <div class="pill-def reveal">
+                <div class="pill-name">Cumplimiento</div>
+                <div class="pill-desc">Adhesión a estándares de mantenibilidad.</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- =====================================================================
+     SLIDE 27 — CORREGIDO: Efecto Dominó (L266-275)
+     Atribución académica: Haney, Yau, Collofello, Black
+     ===================================================================== -->
+<section class="slide content-slide" data-slide="27">
+    <div class="slide-content">
+        <h2 class="reveal">Efecto <span class="accent">Dominó</span></h2>
+        <p class="text-secondary reveal" style="margin-top:4px; max-width:1200px;">Ripple Effect</p>
+        <p class="text-secondary reveal" style="margin-top:12px; max-width:1200px;">Propagación de cambios no planificados: una modificación en el Módulo A desencadena errores en cascada en los módulos interdependientes B, C y D.</p>
+        <div class="title-rule reveal"></div>
+        <div class="domino-flow">
+            <div class="domino-node reveal">Módulo A</div>
+            <span class="domino-arrow reveal">→</span>
+            <div class="domino-node reveal">Módulo B</div>
+            <span class="domino-arrow reveal">→</span>
+            <div class="domino-node reveal">Módulo C</div>
+            <span class="domino-arrow reveal">→</span>
+            <div class="domino-node reveal">Módulo D</div>
+        </div>
+        <p class="text-secondary reveal" style="margin-top:36px; max-width:1300px; line-height:1.6; font-style:italic;">
+            "El término fue acuñado inicialmente por <span style="color:var(--accent-amber);">Haney</span> a través de técnicas probabilísticas de matrices de interconexión modular y refinado posteriormente en algoritmos de análisis estático desarrollados por <span style="color:var(--accent-amber);">Yau, Collofello y Black</span>. Un sistema propenso al efecto dominó incrementa drásticamente los esfuerzos de mantenimiento y destruye la confiabilidad del producto."
+        </p>
+    </div>
+</section>
+
+<!-- =====================================================================
+     SLIDE 28 — NUEVA: Estabilidad de un Diseño (L279-285)
+     ===================================================================== -->
+<section class="slide content-slide" data-slide="28">
+    <div class="slide-content">
+        <h2 class="reveal">Estabilidad de un <span class="accent">Diseño</span></h2>
+        <p class="text-secondary reveal" style="margin-top:8px; max-width:1200px;">Design Stability</p>
+        <div class="title-rule reveal"></div>
+        <p class="reveal" style="line-height:1.7; max-width:1300px;">
+            Capacidad de la arquitectura lógica del sistema para resistir la propagación de cambios — su <span style="color:var(--accent-amber);">inmunidad estructural contra el efecto dominó</span>. Un diseño altamente estable confina el impacto de una alteración de manera estrictamente local.
+        </p>
+        <div class="shield-diagram">
+            <div class="shield-core reveal">Diseño<br>Estable</div>
+            <div class="shield-principles">
+                <div class="shield-principle reveal"><span class="shield-marker"></span>Bajo acoplamiento</div>
+                <div class="shield-principle reveal"><span class="shield-marker"></span>Alta cohesión</div>
+                <div class="shield-principle reveal"><span class="shield-marker"></span>Patrones de diseño con interfaces abstractas</div>
+                <div class="shield-principle reveal" style="color:var(--accent-amber);"><span class="shield-marker"></span>Actúan como «escudos» que minimizan dependencias directas</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- =====================================================================
+     SLIDE 29 — NUEVA: Sistemas Heredados / Legacy (L288-303)
+     ===================================================================== -->
+<section class="slide content-slide" data-slide="29">
+    <div class="slide-content">
+        <h2 class="reveal">Sistemas <span class="accent">Heredados</span></h2>
+        <p class="text-secondary reveal" style="margin-top:4px;">Legacy Systems</p>
+        <div class="title-rule reveal"></div>
+        <p class="reveal" style="line-height:1.6; max-width:1400px;">
+            Infraestructura informática que, a pesar de operar bajo plataformas obsoletas, tecnologías en desuso y arquitecturas degradadas, resulta <span style="color:var(--accent-amber);">indispensable para el funcionamiento diario del negocio</span>.
+        </p>
+        <p class="text-secondary reveal" style="margin-top:24px; letter-spacing:0.08em;">FACTORES DE RIESGO CRÍTICOS</p>
+        <ul class="factors-list">
+            <li class="reveal"><span class="factor-num">1</span>Ausencia absoluta de documentación técnica actualizada</li>
+            <li class="reveal"><span class="factor-num">2</span>Pérdida de la traza de los programadores originales</li>
+            <li class="reveal"><span class="factor-num">3</span>Imposibilidad de realizar pruebas automatizadas</li>
+            <li class="reveal"><span class="factor-num">4</span>Acoplamiento extremo — sumamente vulnerable al efecto dominó</li>
+        </ul>
+        <div class="callout-box reveal" style="margin-top:28px;">
+            <p>"Su reemplazo total representa un costo financiero y un riesgo de falla de migración prohibitivos."</p>
+        </div>
+    </div>
+</section>
+
+<!-- =====================================================================
+     SLIDE 30 — CORREGIDO: Cadena causa→costo (L310-326)
+     De 4 nodos a 6 nodos. Incluye Alto Acoplamiento y Baja Mantenibilidad.
+     ===================================================================== -->
+<section class="slide content-slide" data-slide="30">
+    <div class="slide-content">
+        <h2 class="reveal">La <span class="accent">Cadena</span> Causa → Costo</h2>
+        <p class="text-secondary reveal" style="margin-top:4px; max-width:1300px;">Interdependencia arquitectónica e impacto de negocio</p>
+        <div class="title-rule reveal"></div>
+        <div class="flow-sequence">
+            <div class="flow-box reveal">Diseño Deficiente</div>
+            <span class="flow-arrow reveal">→</span>
+            <div class="flow-box reveal">Alto Acoplamiento</div>
+            <span class="flow-arrow reveal">→</span>
+            <div class="flow-box reveal">Efecto Dominó</div>
+            <span class="flow-arrow reveal">→</span>
+            <div class="flow-box reveal">Baja Mantenibilidad</div>
+            <span class="flow-arrow reveal">→</span>
+            <div class="flow-box reveal">Sistema Heredado</div>
+            <span class="flow-arrow reveal">→</span>
+            <div class="flow-box trap reveal">Alto Costo</div>
+        </div>
+        <p class="text-secondary reveal" style="margin-top:36px; max-width:1500px; line-height:1.6;">
+            Un diseño original deficiente, con bajo estabilidad de diseño por alto acoplamiento, propicia un severo efecto dominó ante cualquier solicitud de cambio. Esto deteriora la mantenibilidad global del producto, extendiendo los tiempos de análisis de impacto (analizabilidad) y exigiendo ciclos redundantes de pruebas de regresión (testabilidad). Con los años, los parches apresurados erosionan la arquitectura hasta transformar el software en un <span style="color:var(--accent-amber);">sistema heredado</span>, donde el costo anualizado de mantenimiento consume la mayor parte del presupuesto KLO y bloquea la capacidad de innovación.
+        </p>
+    </div>
+</section>
+
+<!-- =====================================================================
+     SLIDE 31 — CORREGIDO: Conclusión / Valoración Personal (L329-355)
+     ===================================================================== -->
+<section class="slide content-slide" data-slide="31">
+    <div class="slide-content">
+        <h2 class="reveal">Conclusión y <span class="accent">Valoración Personal</span></h2>
+        <div class="title-rule reveal"></div>
+        <p class="reveal" style="line-height:1.7; max-width:1500px; margin-bottom:28px;">
+            Antes de esta investigación, pensaba que el mantenimiento de software se trataba básicamente de corregir errores. Pero lo que más me sorprendió fue descubrir que <span style="color:var(--accent-amber); font-weight:500;">la mayor parte del trabajo de un desarrollador no es crear software nuevo, sino mantener el que ya existe</span>. Esto cambió completamente mi perspectiva.
+        </p>
+        <p class="text-secondary reveal" style="letter-spacing:0.08em; margin-bottom:16px;">DOS RAZONES FUNDAMENTALES</p>
+        <div class="two-col" style="gap:40px; margin-top:0;">
+            <div>
+                <div class="def-item reveal">
+                    <div class="marker"></div>
+                    <div>
+                        <div class="def-label">Escalabilidad del Proyecto</div>
+                        <p class="def-text">Un código bien mantenido, fácil de leer y modificar, permite que los desarrolladores pierdan menos tiempo tratando de entender lo que otros hicieron, lo que reduce errores y frustraciones.</p>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="def-item reveal">
+                    <div class="marker"></div>
+                    <div>
+                        <div class="def-label">Razón Económica</div>
+                        <p class="def-text">Cuanto más se traba el desarrollo por código mal mantenido, más se demoran las entregas, lo que retrasa pagos y deteriora la imagen del equipo. Además, menos proyectos nuevos se pueden arrancar.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- =====================================================================
+     SLIDE 32 — NUEVA: Registro de Cambios (Changelog)
+     ===================================================================== -->
+<section class="slide content-slide" data-slide="32">
+    <div class="slide-content">
+        <h2 class="reveal">Registro de <span class="accent">Cambios</span></h2>
+        <p class="text-secondary reveal" style="margin-top:4px;">Modificaciones realizadas para alinear la presentación 1:1 con el informe (Lx–Ly = líneas en /tmp/informe_mantenimiento.txt)</p>
+        <div class="title-rule reveal"></div>
+        <ul class="changelog-list">
+            <li class="reveal"><span class="ch-tag corregir">CORREGIR</span> Slide 1 — Fecha actualizada a "mayo 2026" (L19)</li>
+            <li class="reveal"><span class="ch-tag corregir">CORREGIR</span> Slide 2 — Agenda renombrada con 6 secciones del informe (L30–355)</li>
+            <li class="reveal"><span class="ch-tag nueva">NUEVA</span> Slide 4 — Introducción: disciplina fundamental y 3 ejes (L31–39)</li>
+            <li class="reveal"><span class="ch-tag nueva">NUEVA</span> Slide 5 — Crisis de los 60 y ciclo continuo (L44–47)</li>
+            <li class="reveal"><span class="ch-tag corregir">CORREGIR</span> Slide 6 — Definiciones: ANSI/IEEE 610.12 (1990) + ISO/IEC 14764 (2006) (L52–61)</li>
+            <li class="reveal"><span class="ch-tag eliminar">ELIMINAR</span> Slides 5 y 6 anteriores — Pressman y "Estándar Moderno" (no en PDF)</li>
+            <li class="reveal"><span class="ch-tag corregir">CORREGIR</span> Slide 7 — Síntesis: agregado "y funcionalidad" (L67)</li>
+            <li class="reveal"><span class="ch-tag corregir">CORREGIR</span> Slide 9 — Correctivo: eliminados % de origen de defectos (L85–87)</li>
+            <li class="reveal"><span class="ch-tag corregir">CORREGIR</span> Slide 10 — Adaptativo: expandido con SO/DB y funcionalidad percibida (L88–91)</li>
+            <li class="reveal"><span class="ch-tag corregir">CORREGIR</span> Slide 11 — Perfectivo: expandido con 4 ejemplos (L93–95)</li>
+            <li class="reveal"><span class="ch-tag corregir">CORREGIR</span> Slide 12 — Preventivo: "defectos latentes" y "antes de fallas" (L100–105)</li>
+            <li class="reveal"><span class="ch-tag nueva">NUEVA</span> Slide 13 — Cuadro 1: tabla comparativa de tipos de mantenimiento (L111–128)</li>
+            <li class="reveal"><span class="ch-tag corregir">CORREGIR</span> Slide 15 — Evolución histórica: rangos corregidos + drivers (L142–150)</li>
+            <li class="reveal"><span class="ch-tag eliminar">ELIMINAR</span> Referencia a "Frazer 1992" del slide 15 anterior</li>
+            <li class="reveal"><span class="ch-tag corregir">CORREGIR</span> Slide 16 — Distribución: 4 tipos con % y Origen del Costo (L161–171)</li>
+            <li class="reveal"><span class="ch-tag corregir">CORREGIR</span> Slide 17 — Costos: KLO, Regla 15–25%, equipos, downtime (L179–197)</li>
+            <li class="reveal"><span class="ch-tag corregir">CORREGIR</span> Slide 18 — Eliminada referencia a "Basili et al." (L203–232)</li>
+            <li class="reveal"><span class="ch-tag nueva">NUEVA</span> Slide 19 — Cuadro 4: tabla de actores y tareas (L209–232)</li>
+            <li class="reveal"><span class="ch-tag corregir">CORREGIR</span> Slide 20 — Resp. Mant.: Gestión de Solicitudes MR/PR, Scrum/Kanban (L211–214)</li>
+            <li class="reveal"><span class="ch-tag nueva">NUEVA</span> Slide 21 — Planificación de Transición (L215–217)</li>
+            <li class="reveal"><span class="ch-tag corregir">CORREGIR</span> Slide 22 — Analista: "prevenir regresiones" y tipos C/A/P (L218–221)</li>
+            <li class="reveal"><span class="ch-tag corregir">CORREGIR</span> Slide 23 — Programador: hotfixes, pruebas automatizadas, regresión (L222–228)</li>
+            <li class="reveal"><span class="ch-tag nueva">NUEVA</span> Slide 24 — Migración y Despliegue (L229–231)</li>
+            <li class="reveal"><span class="ch-tag corregir">CORREGIR</span> Slide 26 — Mantenibilidad: 5 subcaracterísticas con definiciones (L254–262)</li>
+            <li class="reveal"><span class="ch-tag corregir">CORREGIR</span> Slide 27 — Efecto Dominó: atribución Haney, Yau/Collofello/Black (L271–274)</li>
+            <li class="reveal"><span class="ch-tag nueva">NUEVA</span> Slide 28 — Estabilidad de un Diseño: inmunidad al efecto dominó (L279–285)</li>
+            <li class="reveal"><span class="ch-tag nueva">NUEVA</span> Slide 29 — Sistemas Heredados: 4 factores de riesgo (L288–303)</li>
+            <li class="reveal"><span class="ch-tag eliminar">ELIMINAR</span> Slide 24 anterior — Leyes de Lehman (no en PDF)</li>
+            <li class="reveal"><span class="ch-tag corregir">CORREGIR</span> Slide 30 — Cadena completa de 6 nodos (L310–326)</li>
+            <li class="reveal"><span class="ch-tag corregir">CORREGIR</span> Slide 31 — Conclusión: 2 razones + valoración personal (L329–355)</li>
+            <li class="reveal"><span class="ch-tag nueva">NUEVA</span> Slide 32 — Este registro de cambios</li>
+        </ul>
+    </div>
+</section>
+
+        </main>
+    </div>
+
+    <script>
+/* === BLOCK 23: Slide Presentation Controller === */
+class SlidePresentation {
+    constructor() {
+        this.slides = document.querySelectorAll('.slide');
+        this.currentSlide = 0;
+        this.stage = document.getElementById('deckStage');
+        this.counter = document.getElementById('slideCounter');
+        this.totalSlides = this.slides.length;
+
+        this.setupStageScale();
+        this.setupKeyboardNav();
+        this.setupTouchNav();
+        this.setupWheelNav();
+        this.buildDotNav();
+        this.showSlide(0);
+    }
+
+    /* --- Stage Scaling --- */
+    setupStageScale() {
+        const scale = () => {
+            const factor = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+            const x = (window.innerWidth - 1920 * factor) / 2;
+            const y = (window.innerHeight - 1080 * factor) / 2;
+            this.stage.style.transform = `translate(${x}px, ${y}px) scale(${factor})`;
+        };
+        scale();
+        window.addEventListener('resize', scale);
+    }
+
+    /* --- Keyboard Navigation --- */
+    setupKeyboardNav() {
+        document.addEventListener('keydown', (e) => {
+            if (e.target.getAttribute('contenteditable')) return;
+
+            switch(e.key) {
+                case 'ArrowRight':
+                case 'ArrowDown':
+                case ' ':
+                case 'PageDown':
+                    e.preventDefault();
+                    this.next();
+                    break;
+                case 'ArrowLeft':
+                case 'ArrowUp':
+                case 'PageUp':
+                    e.preventDefault();
+                    this.prev();
+                    break;
+                case 'Home':
+                    e.preventDefault();
+                    this.showSlide(0);
+                    break;
+                case 'End':
+                    e.preventDefault();
+                    this.showSlide(this.totalSlides - 1);
+                    break;
+            }
+        });
+    }
+
+    /* --- Touch / Swipe Support --- */
+    setupTouchNav() {
+        let startX = 0, startY = 0;
+        const threshold = 50;
+
+        this.stage.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
+            startY = e.touches[0].clientY;
+        }, { passive: true });
+
+        this.stage.addEventListener('touchend', (e) => {
+            const dx = e.changedTouches[0].clientX - startX;
+            const dy = e.changedTouches[0].clientY - startY;
+            if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > threshold) {
+                dx < 0 ? this.next() : this.prev();
+            }
+        }, { passive: true });
+    }
+
+    /* --- Mouse Wheel Navigation --- */
+    setupWheelNav() {
+        let lastWheel = 0;
+        document.addEventListener('wheel', (e) => {
+            const now = Date.now();
+            if (now - lastWheel < 600) return;
+            lastWheel = now;
+            e.deltaY > 0 ? this.next() : this.prev();
+        }, { passive: true });
+    }
+
+    /* --- Dot Navigation --- */
+    buildDotNav() {
+        const nav = document.getElementById('dotNav');
+        for (let i = 0; i < this.totalSlides; i++) {
+            const btn = document.createElement('button');
+            btn.setAttribute('aria-label', `Diapositiva ${i + 1}`);
+            btn.addEventListener('click', () => this.showSlide(i));
+            nav.appendChild(btn);
+        }
+        this.dots = nav.querySelectorAll('button');
+    }
+
+    /* --- Show Slide --- */
+    showSlide(index) {
+        this.currentSlide = Math.max(0, Math.min(index, this.totalSlides - 1));
+        this.slides.forEach((slide, i) => {
+            slide.classList.toggle('active', i === this.currentSlide);
+            slide.classList.toggle('visible', i === this.currentSlide);
+        });
+
+        // Update counter
+        const num = String(this.currentSlide + 1).padStart(2, '0');
+        const total = String(this.totalSlides).padStart(2, '0');
+        this.counter.textContent = `${num} / ${total}`;
+
+        // Update dots
+        if (this.dots) {
+            this.dots.forEach((dot, i) => {
+                dot.classList.toggle('active', i === this.currentSlide);
+            });
+        }
+    }
+
+    next() { this.showSlide(this.currentSlide + 1); }
+    prev() { this.showSlide(this.currentSlide - 1); }
+}
+
+/* === BLOCK 24: Inline Editing System === */
+class InlineEditor {
+    constructor() {
+        this.isActive = false;
+        this.storageKey = 'mantenimiento-sof-edits';
+        this.init();
+    }
+
+    init() {
+        this.toggleBtn = document.getElementById('editToggle');
+        this.hotzone = document.querySelector('.edit-hotzone');
+
+        // Toggle button click
+        this.toggleBtn.addEventListener('click', () => this.toggleEditMode());
+
+        // Hotzone hover with 400ms grace period
+        let hideTimeout = null;
+        this.hotzone.addEventListener('mouseenter', () => {
+            clearTimeout(hideTimeout);
+            this.toggleBtn.classList.add('show');
+        });
+        this.hotzone.addEventListener('mouseleave', () => {
+            hideTimeout = setTimeout(() => {
+                if (!this.isActive) this.toggleBtn.classList.remove('show');
+            }, 400);
+        });
+        this.toggleBtn.addEventListener('mouseenter', () => {
+            clearTimeout(hideTimeout);
+        });
+        this.toggleBtn.addEventListener('mouseleave', () => {
+            hideTimeout = setTimeout(() => {
+                if (!this.isActive) this.toggleBtn.classList.remove('show');
+            }, 400);
+        });
+
+        // Hotzone direct click
+        this.hotzone.addEventListener('click', () => this.toggleEditMode());
+
+        // Keyboard shortcut (E key)
+        document.addEventListener('keydown', (e) => {
+            if ((e.key === 'e' || e.key === 'E') && !e.target.getAttribute('contenteditable')) {
+                this.toggleEditMode();
+            }
+            // Ctrl+S to save
+            if ((e.ctrlKey || e.metaKey) && e.key === 's' && this.isActive) {
+                e.preventDefault();
+                this.saveEdits();
+            }
+        });
+
+        this.loadEdits();
+    }
+
+    toggleEditMode() {
+        this.isActive = !this.isActive;
+        this.toggleBtn.classList.toggle('active', this.isActive);
+
+        const editables = document.querySelectorAll('.slide h1, .slide h2, .slide p, .slide li, .slide .stat-number, .slide .stat-label, .slide .def-label, .slide .def-text, .slide .pill, .slide .pill-name, .slide .pill-desc, .slide .domino-node, .slide .flow-box, .slide .comparison-box p, .slide .comparison-box h3, .slide .callout-box p, .slide .kicker, .slide .title-sub, .slide .title-footer, .slide .conclusion-text, .slide .section-number, .slide .section-subtitle, .slide .agenda-list li, .slide .laws-list .law-content h3, .slide .laws-list .law-content p, .slide .quote-text, .slide .bar-label, .slide .bar-value, .slide .timeline-era, .slide .role-tag, .slide .eje-name, .slide .eje-desc, .slide .mini-tl-text, .slide .shield-principle, .slide .svg-table-caption');
+
+        editables.forEach(el => {
+            el.setAttribute('contenteditable', this.isActive ? 'true' : 'false');
+        });
+
+        if (!this.isActive) {
+            this.saveEdits();
+        }
+    }
+
+    saveEdits() {
+        const data = {};
+        document.querySelectorAll('[contenteditable="true"]').forEach((el, i) => {
+            data[`edit-${i}`] = el.innerHTML;
+        });
+        document.querySelectorAll('[data-edit-id]').forEach(el => {
+            data[el.getAttribute('data-edit-id')] = el.innerHTML;
+        });
+        try {
+            localStorage.setItem(this.storageKey, JSON.stringify(data));
+        } catch(e) { /* quota exceeded */ }
+    }
+
+    loadEdits() {
+        try {
+            const raw = localStorage.getItem(this.storageKey);
+            if (!raw) return;
+            const data = JSON.parse(raw);
+            // Attempt to restore — this is best-effort
+        } catch(e) { /* corrupted */ }
+    }
+}
+
+/* === BLOCK 25: Initialize === */
+document.addEventListener('DOMContentLoaded', () => {
+    const presentation = new SlidePresentation();
+    const editor = new InlineEditor();
+});
+    </script>
+</body>
+</html>

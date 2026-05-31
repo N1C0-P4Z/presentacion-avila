@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vellum — Title Slide Preview</title>
+<style>
+/* === GOOGLE FONTS === */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;1,400&family=DM+Sans:wght@300;400;500&family=Courier+Prime&display=swap');
+
+/* === CSS VARIABLES === */
+:root {
+    --stage-bg: #2A3870;
+    --slide-bg: #2A3870;
+    --type-primary: #E8D85C;
+    --type-emphasis: #F5E168;
+    --teal-accent: #3A7878;
+    --type-secondary: #B8C0D8;
+    --type-dim: #7A84A8;
+    --font-headline: 'Cormorant Garamond', serif;
+    --font-body: 'DM Sans', sans-serif;
+    --font-mono: 'Courier Prime', monospace;
+}
+
+/* === FIXED 16:9 STAGE: MANDATORY BASE STYLES === */
+html,
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+    background: var(--stage-bg, #000);
+}
+
+.deck-viewport {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    background: var(--stage-bg, #000);
+}
+
+.deck-stage {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 1920px;
+    height: 1080px;
+    overflow: hidden;
+    transform-origin: 0 0;
+    background: var(--slide-bg, #fff);
+}
+
+.slide {
+    position: absolute;
+    inset: 0;
+    width: 1920px;
+    height: 1080px;
+    overflow: hidden;
+    display: block;
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+    background: var(--slide-bg, #fff);
+}
+
+.slide.active,
+.slide.visible {
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+    z-index: 1;
+}
+
+img,
+video,
+canvas,
+svg {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.deck-controls {
+    position: fixed;
+    left: 50%;
+    bottom: 22px;
+    transform: translateX(-50%);
+    z-index: 1000;
+}
+
+@media print {
+    html,
+    body {
+        width: 1920px;
+        height: auto;
+        overflow: visible;
+        background: #fff;
+    }
+
+    .deck-viewport {
+        position: static;
+        overflow: visible;
+        background: #fff;
+    }
+
+    .deck-stage {
+        position: static;
+        width: auto;
+        height: auto;
+        transform: none !important;
+        background: none;
+    }
+
+    .slide {
+        position: relative;
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        pointer-events: auto !important;
+        width: 1920px;
+        height: 1080px;
+        break-after: page;
+        page-break-after: always;
+    }
+
+    .slide:last-child {
+        break-after: auto;
+        page-break-after: auto;
+    }
+
+    .deck-controls {
+        display: none !important;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.2s !important;
+    }
+}
+
+/* === VELLUM DESIGN SYSTEM === */
+
+/* Atmospheric background: subtle radial gradient for depth */
+.vellum-slide {
+    background:
+        radial-gradient(ellipse 120% 100% at 20% 80%, rgba(42, 56, 112, 0.0) 0%, rgba(26, 34, 72, 0.6) 100%),
+        radial-gradient(ellipse 80% 60% at 80% 20%, rgba(58, 120, 120, 0.08) 0%, transparent 70%),
+        var(--slide-bg);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 100px 140px 100px 160px;
+    box-sizing: border-box;
+}
+
+/* Faint horizontal rule for visual structure */
+.vellum-slide::before {
+    content: '';
+    position: absolute;
+    top: 280px;
+    left: 160px;
+    width: 60px;
+    height: 1.5px;
+    background: var(--teal-accent);
+    opacity: 0.7;
+}
+
+/* === KICKER === */
+.kicker {
+    font-family: var(--font-mono);
+    font-size: 15px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--teal-accent);
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fadeSlideUp 0.8s ease-out 0.3s forwards;
+}
+
+/* === TITLE === */
+.slide-title {
+    font-family: var(--font-headline);
+    font-style: italic;
+    font-weight: 400;
+    font-size: 78px;
+    line-height: 1.1;
+    color: var(--type-primary);
+    margin: 0 0 28px 0;
+    max-width: 1200px;
+    opacity: 0;
+    animation: fadeSlideUp 1s ease-out 0.6s forwards;
+}
+
+/* === SUBTITLE === */
+.slide-subtitle {
+    font-family: var(--font-body);
+    font-weight: 300;
+    font-size: 30px;
+    line-height: 1.4;
+    color: var(--type-secondary);
+    margin: 0 0 0 4px;
+    max-width: 900px;
+    opacity: 0;
+    animation: fadeSlideUp 0.9s ease-out 0.9s forwards;
+}
+
+/* === DECORATIVE EMPHASIS on first word === */
+.slide-title .em {
+    color: var(--type-emphasis);
+}
+
+/* === FOOTER (bottom area) === */
+.slide-footer {
+    position: absolute;
+    bottom: 80px;
+    left: 160px;
+    right: 160px;
+    font-family: var(--font-body);
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--type-dim);
+    letter-spacing: 0.3px;
+    opacity: 0;
+    animation: fadeSlideUp 0.8s ease-out 1.4s forwards;
+}
+
+.slide-footer strong {
+    color: var(--type-secondary);
+    font-weight: 500;
+}
+
+/* === PIN-NOTE (bottom-left attribution) === */
+.pin-note {
+    position: absolute;
+    bottom: 36px;
+    left: 160px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--teal-accent);
+    opacity: 0;
+    animation: fadeSlideUp 0.7s ease-out 1.7s forwards;
+}
+
+/* === ANIMATIONS === */
+@keyframes fadeSlideUp {
+    0% {
+        opacity: 0;
+        transform: translateY(18px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* === PREFERS REDUCED MOTION === */
+@media (prefers-reduced-motion: reduce) {
+    .kicker,
+    .slide-title,
+    .slide-subtitle,
+    .slide-footer,
+    .pin-note {
+        animation: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+    }
+}
+
+/* === RESPONSIVE STAGE SCALING === */
+</style>
+</head>
+<body>
+    <div class="deck-viewport">
+        <div class="deck-stage">
+            <div class="slide active vellum-slide">
+
+                <!-- Kicker -->
+                <div class="kicker">Ingeniería de Software</div>
+
+                <!-- Title -->
+                <h1 class="slide-title"><span class="em">Ingeniería</span> del Mantenimiento de Software</h1>
+
+                <!-- Subtitle -->
+                <p class="slide-subtitle">La realidad del ciclo de vida del código</p>
+
+                <!-- Footer -->
+                <div class="slide-footer">
+                    <strong>Docente:</strong> Paula Ávila &nbsp;|&nbsp;
+                    <strong>Estudiantes:</strong> Santiago Cañal, Nicolás Paz Reyes, Valentino Aviani, Martín Moloeznik &nbsp;|&nbsp;
+                    6to Informática · Instituto Politécnico Superior Gral. San Martín
+                </div>
+
+                <!-- Pin-note attribution -->
+                <div class="pin-note">Presentación · 2026</div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* === RESPONSIVE STAGE SCALING === */
+        (function () {
+            var stage = document.querySelector('.deck-stage');
+            var viewport = document.querySelector('.deck-viewport');
+
+            function scaleStage() {
+                var vw = viewport.clientWidth;
+                var vh = viewport.clientHeight;
+                var sw = 1920;
+                var sh = 1080;
+                var scaleX = vw / sw;
+                var scaleY = vh / sh;
+                var scale = Math.min(scaleX, scaleY);
+
+                /* Center the stage */
+                var offsetX = (vw - sw * scale) / 2;
+                var offsetY = (vh - sh * scale) / 2;
+
+                stage.style.transform = 'translate(' + offsetX + 'px, ' + offsetY + 'px) scale(' + scale + ')';
+            }
+
+            scaleStage();
+            window.addEventListener('resize', scaleStage);
+        })();
+    </script>
+</body>
+</html>

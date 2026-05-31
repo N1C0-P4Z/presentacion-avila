@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ingeniería del Mantenimiento de Software</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,400;0,600;1,400;1,600&family=IBM+Plex+Sans:wght@300;400&display=swap" rel="stylesheet">
+<style>
+/* === VIEWPORT BASE (mandatory) === */
+html,
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+    background: #0f0f0f;
+}
+
+.deck-viewport {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    background: #0f0f0f;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.deck-stage {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 1920px;
+    height: 1080px;
+    overflow: hidden;
+    transform-origin: 0 0;
+    background: #0f0f0f;
+}
+
+.slide {
+    position: absolute;
+    inset: 0;
+    width: 1920px;
+    height: 1080px;
+    overflow: hidden;
+    display: block;
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+    background: #0f0f0f;
+}
+
+.slide.active,
+.slide.visible {
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+    z-index: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.2s !important;
+    }
+}
+
+/* === SCALING === */
+@media (max-width: 1920px) {
+    .deck-stage {
+        transform: scale(calc(100vw / 1920));
+    }
+}
+@media (max-height: 1080px) and (min-width: 1920px) {
+    .deck-stage {
+        transform: scale(calc(100vh / 1080));
+    }
+}
+@media (max-width: 1920px) and (max-height: 1080px) {
+    .deck-stage {
+        transform: scale(calc(min(100vw / 1920, 100vh / 1080)));
+    }
+}
+
+/* === DARK BOTANICAL DESIGN SYSTEM === */
+:root {
+    --bg: #0f0f0f;
+    --text-primary: #e8e4df;
+    --text-secondary: #9a9590;
+    --accent-warm: #d4a574;
+    --accent-pink: #e8b4b8;
+    --accent-amber: #FFB300;
+    --font-display: 'Cormorant', serif;
+    --font-body: 'IBM Plex Sans', sans-serif;
+}
+
+/* === SLIDE LAYOUT === */
+.slide-title {
+    position: relative;
+    width: 1920px;
+    height: 1080px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg);
+    overflow: hidden;
+}
+
+/* === ABSTRACT BACKGROUND BLOBS === */
+.bg-blobs {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(120px);
+    opacity: 0.18;
+}
+
+.blob--terracotta {
+    width: 800px;
+    height: 800px;
+    background: radial-gradient(circle, var(--accent-warm) 0%, transparent 70%);
+    top: -120px;
+    right: -180px;
+    opacity: 0.14;
+}
+
+.blob--rose {
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, var(--accent-pink) 0%, transparent 70%);
+    bottom: -80px;
+    left: -100px;
+    opacity: 0.12;
+}
+
+.blob--amber {
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, var(--accent-amber) 0%, transparent 70%);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0.04;
+}
+
+.blob--warm-sm {
+    width: 350px;
+    height: 350px;
+    background: radial-gradient(circle, var(--accent-warm) 0%, transparent 70%);
+    bottom: 15%;
+    right: 15%;
+    opacity: 0.1;
+}
+
+.blob--rose-sm {
+    width: 280px;
+    height: 280px;
+    background: radial-gradient(circle, var(--accent-pink) 0%, transparent 70%);
+    top: 20%;
+    left: 10%;
+    opacity: 0.09;
+}
+
+/* === THIN VERTICAL ACCENT LINES === */
+.accent-lines {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.accent-line {
+    position: absolute;
+    top: 0;
+    width: 1px;
+    height: 100%;
+    opacity: 0.08;
+}
+
+.accent-line--1 {
+    left: 12%;
+    background: linear-gradient(
+        to bottom,
+        transparent 0%,
+        var(--accent-warm) 30%,
+        var(--accent-warm) 70%,
+        transparent 100%
+    );
+}
+
+.accent-line--2 {
+    left: 88%;
+    background: linear-gradient(
+        to bottom,
+        transparent 0%,
+        var(--accent-pink) 25%,
+        var(--accent-pink) 75%,
+        transparent 100%
+    );
+}
+
+.accent-line--3 {
+    left: 50%;
+    width: 1px;
+    background: linear-gradient(
+        to bottom,
+        transparent 0%,
+        var(--accent-amber) 40%,
+        var(--accent-amber) 60%,
+        transparent 100%
+    );
+    opacity: 0.03;
+}
+
+.accent-line--4 {
+    left: 30%;
+    width: 1px;
+    background: linear-gradient(
+        to bottom,
+        transparent 20%,
+        var(--accent-warm) 45%,
+        var(--accent-warm) 55%,
+        transparent 80%
+    );
+    opacity: 0.05;
+}
+
+.accent-line--5 {
+    left: 70%;
+    width: 1px;
+    background: linear-gradient(
+        to bottom,
+        transparent 20%,
+        var(--accent-pink) 45%,
+        var(--accent-pink) 55%,
+        transparent 80%
+    );
+    opacity: 0.05;
+}
+
+/* === CONTENT === */
+.slide-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 0 160px;
+    max-width: 1400px;
+}
+
+/* === KICKER EYEBROW === */
+.kicker {
+    font-family: var(--font-body);
+    font-weight: 400;
+    font-size: 14px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent-amber);
+    margin: 0 0 36px 0;
+    opacity: 0.85;
+}
+
+/* === TITLE === */
+.slide-title-text {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 400;
+    font-size: 82px;
+    line-height: 1.1;
+    color: var(--text-primary);
+    letter-spacing: 0.01em;
+    margin: 0 0 32px 0;
+    max-width: 1100px;
+}
+
+.slide-title-text .accent-amber {
+    color: var(--accent-amber);
+    text-shadow: 0 0 40px rgba(255, 179, 0, 0.3), 0 0 80px rgba(255, 179, 0, 0.15);
+}
+
+/* === SUBTITLE === */
+.slide-subtitle {
+    font-family: var(--font-body);
+    font-weight: 300;
+    font-size: 26px;
+    line-height: 1.5;
+    color: var(--text-primary);
+    letter-spacing: 0.04em;
+    margin: 0;
+}
+
+/* === DECORATIVE DIVIDER === */
+.divider {
+    width: 70px;
+    height: 2px;
+    background: var(--accent-amber);
+    opacity: 0.8;
+    margin: 36px 0 40px 0;
+}
+
+/* === FOOTER === */
+.slide-footer {
+    position: absolute;
+    bottom: 64px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    z-index: 2;
+}
+
+.slide-footer p {
+    font-family: var(--font-body);
+    font-weight: 300;
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    opacity: 0.7;
+    letter-spacing: 0.03em;
+    margin: 0;
+    padding: 0 120px;
+}
+
+/* === STAGGERED REVEAL ANIMATION === */
+.reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    animation: revealUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.reveal--d1 { animation-delay: 0.2s; }
+.reveal--d2 { animation-delay: 0.45s; }
+.reveal--d3 { animation-delay: 0.7s; }
+.reveal--d4 { animation-delay: 0.95s; }
+.reveal--d5 { animation-delay: 1.2s; }
+
+@keyframes revealUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Blob entrance */
+.blob {
+    opacity: 0;
+    animation: blobFade 2s ease forwards;
+}
+
+.blob--terracotta { animation-delay: 0.1s; }
+.blob--rose { animation-delay: 0.3s; }
+.blob--amber { animation-delay: 0.5s; }
+.blob--warm-sm { animation-delay: 0.4s; }
+.blob--rose-sm { animation-delay: 0.2s; }
+
+@keyframes blobFade {
+    to {
+        opacity: var(--blob-opacity, 0.12);
+    }
+}
+
+.blob--terracotta { --blob-opacity: 0.14; }
+.blob--rose { --blob-opacity: 0.12; }
+.blob--amber { --blob-opacity: 0.04; }
+.blob--warm-sm { --blob-opacity: 0.1; }
+.blob--rose-sm { --blob-opacity: 0.09; }
+
+/* Accent line entrance */
+.accent-line {
+    opacity: 0;
+    animation: lineReveal 1.5s ease forwards;
+}
+
+.accent-line--1 { animation-delay: 0.6s; }
+.accent-line--2 { animation-delay: 0.8s; }
+.accent-line--3 { animation-delay: 0.4s; }
+.accent-line--4 { animation-delay: 0.7s; }
+.accent-line--5 { animation-delay: 0.9s; }
+
+@keyframes lineReveal {
+    to {
+        opacity: var(--line-opacity, 0.08);
+    }
+}
+
+.accent-line--1 { --line-opacity: 0.08; }
+.accent-line--2 { --line-opacity: 0.08; }
+.accent-line--3 { --line-opacity: 0.03; }
+.accent-line--4 { --line-opacity: 0.05; }
+.accent-line--5 { --line-opacity: 0.05; }
+
+/* Divider animation */
+.divider {
+    transform: scaleX(0);
+    transform-origin: center;
+    animation: dividerGrow 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation-delay: 0.9s;
+}
+
+@keyframes dividerGrow {
+    to {
+        transform: scaleX(1);
+    }
+}
+
+/* Amber glow pulse for "Software" */
+.accent-amber {
+    animation: amberGlow 3s ease-in-out infinite;
+    animation-delay: 1.5s;
+}
+
+@keyframes amberGlow {
+    0%, 100% {
+        text-shadow: 0 0 40px rgba(255, 179, 0, 0.3), 0 0 80px rgba(255, 179, 0, 0.15);
+    }
+    50% {
+        text-shadow: 0 0 50px rgba(255, 179, 0, 0.4), 0 0 100px rgba(255, 179, 0, 0.2);
+    }
+}
+
+/* Print */
+@media print {
+    html, body { width: 1920px; height: auto; overflow: visible; background: #fff; }
+    .deck-viewport { position: static; overflow: visible; background: #fff; }
+    .deck-stage { position: static; width: auto; height: auto; transform: none !important; background: none; }
+    .slide { position: relative; display: block !important; visibility: visible !important; opacity: 1 !important; pointer-events: auto !important; width: 1920px; height: 1080px; break-after: page; page-break-after: always; }
+    .slide:last-child { break-after: auto; page-break-after: auto; }
+    .blob, .accent-line { display: none; }
+    .reveal { opacity: 1 !important; transform: none !important; animation: none !important; }
+    .divider { transform: scaleX(1) !important; animation: none !important; }
+    .accent-amber { animation: none !important; }
+}
+</style>
+</head>
+<body>
+<div class="deck-viewport">
+    <div class="deck-stage">
+        <div class="slide slide-title active visible">
+
+            <!-- Abstract background blobs -->
+            <div class="bg-blobs">
+                <div class="blob blob--terracotta"></div>
+                <div class="blob blob--rose"></div>
+                <div class="blob blob--amber"></div>
+                <div class="blob blob--warm-sm"></div>
+                <div class="blob blob--rose-sm"></div>
+            </div>
+
+            <!-- Thin vertical accent lines -->
+            <div class="accent-lines">
+                <div class="accent-line accent-line--1"></div>
+                <div class="accent-line accent-line--2"></div>
+                <div class="accent-line accent-line--3"></div>
+                <div class="accent-line accent-line--4"></div>
+                <div class="accent-line accent-line--5"></div>
+            </div>
+
+            <!-- Main content -->
+            <div class="slide-content">
+                <p class="kicker reveal reveal--d1">6TO INFORMÁTICA · IPS GRAL. SAN MARTÍN</p>
+                <h1 class="slide-title-text reveal reveal--d2">
+                    Ingeniería del Mantenimiento de <span class="accent-amber">Software</span>
+                </h1>
+                <div class="divider reveal reveal--d3"></div>
+                <p class="slide-subtitle reveal reveal--d4">
+                    La realidad del ciclo de vida del código
+                </p>
+            </div>
+
+            <!-- Footer -->
+            <div class="slide-footer reveal reveal--d5">
+                <p>Docente: Paula Ávila | Estudiantes: Santiago Cañal, Nicolás Paz Reyes, Valentino Aviani, Martín Moloeznik</p>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+/* === VIEWPORT SCALING === */
+(function() {
+    const stage = document.querySelector('.deck-stage');
+    function scaleStage() {
+        const vw = window.innerWidth;
+        const vh = window.innerHeight;
+        const sw = 1920;
+        const sh = 1080;
+        const scale = Math.min(vw / sw, vh / sh);
+        stage.style.transform = 'scale(' + scale + ')';
+        stage.style.left = ((vw - sw * scale) / 2) + 'px';
+        stage.style.top = ((vh - sh * scale) / 2) + 'px';
+    }
+    scaleStage();
+    window.addEventListener('resize', scaleStage);
+})();
+</script>
+</body>
+</html>
