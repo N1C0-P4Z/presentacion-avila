@@ -1083,7 +1083,7 @@ img, video, canvas, svg { max-width: 100%; max-height: 100%; }
     <button class="edit-toggle" id="editToggle" title="Modo edición (E)">✏️</button>
 
     <!-- Slide Counter -->
-    <div class="slide-counter" id="slideCounter">01 / 32</div>
+    <div class="slide-counter" id="slideCounter">01 / 34</div>
 
     <!-- Dot Navigation -->
     <nav class="dot-nav" id="dotNav" aria-label="Navegación de diapositivas"></nav>
@@ -1209,6 +1209,7 @@ img, video, canvas, svg { max-width: 100%; max-height: 100%; }
                 <p>"Proceso que describe el esqueleto de actividades destinadas a modificar un producto de software existente preservando su integridad funcional y arquitectónica. Este proceso cubre todo el ciclo de vida del sistema, desde la planificación de la transición del desarrollo inicial hasta el retiro definitivo del producto."</p>
             </div>
         </div>
+        <p class="text-secondary reveal" style="margin-top:24px; font-style:italic; max-width:1500px; line-height:1.5;"><span style="color:var(--accent-amber);">Pressman (1998)</span> complementa estas definiciones institucionales describiendo el mantenimiento como el conjunto de actividades de ingeniería de software que ocurren después de la entrega del producto al cliente — abarcando la corrección de errores, la adaptación a nuevos entornos y la mejora de las prestaciones del sistema.</p>
     </div>
 </section>
 
@@ -1353,12 +1354,16 @@ img, video, canvas, svg { max-width: 100%; max-height: 100%; }
                     <p class="def-text">Expande capacidades del software</p>
                 </div>
             </div>
+            <div class="callout-box reveal" style="margin-top:24px; max-width:1400px;">
+                <p style="font-size:24px; line-height:1.5;"><span style="color:var(--accent-amber);">Subdivisión:</span> Algunos autores dividen este tipo en dos — <strong>Mantenimiento de Ampliación</strong> (incorporación de nuevas funcionalidades) y <strong>Mantenimiento de Eficiencia</strong> (mejora de la eficiencia de ejecución).</p>
+            </div>
+            <p class="text-secondary reveal" style="margin-top:16px; font-style:italic;">Este tipo de mantenimiento aumenta cuando un producto software tiene éxito comercial y es utilizado por muchos usuarios, ya que cuanto más se utiliza, más peticiones de nuevas funcionalidades o mejoras se reciben.</p>
         </div>
     </div>
 </section>
 
 <!-- =====================================================================
-     SLIDE 12 — CORREGIDO: Preventivo (L100-105)
+     SLIDE 12 — CORREGIDO: Preventivo (L100-105, L134-140)
      Se agrega "defectos latentes" y "antes de... fallas efectivas".
      ===================================================================== -->
 <section class="slide content-slide" data-slide="12">
@@ -1396,6 +1401,9 @@ img, video, canvas, svg { max-width: 100%; max-height: 100%; }
                     <div class="def-label">Impacto Funcional</div>
                     <p class="def-text">Mejora mantenibilidad futura</p>
                 </div>
+            </div>
+            <div class="callout-box reveal" style="margin-top:20px; max-width:1400px;">
+                <p style="font-size:24px; line-height:1.5;"><span style="color:var(--accent-amber);">Mantenimiento para la Reutilización:</span> modificar el software (buscando y modificando componentes para incluirlos en bibliotecas) para que sea más fácilmente reutilizable. Es mantenimiento preventivo especializado en mejorar la propiedad de reusabilidad del software.</p>
             </div>
         </div>
     </div>
@@ -1564,6 +1572,7 @@ img, video, canvas, svg { max-width: 100%; max-height: 100%; }
             </svg>
         </div>
         <p class="svg-table-caption reveal">Cuadro 3: Distribución del esfuerzo por tipo de mantenimiento.</p>
+        <p class="text-secondary reveal" style="margin-top:12px; font-style:italic; max-width:1400px; line-height:1.5;">Según <span style="color:var(--accent-amber);">Frazer (1992)</span>, más del 60% de las modificaciones en el software corresponden a mantenimiento perfectivo. Esta conclusión también es respaldada por <span style="color:var(--accent-amber);">McKee (1984)</span> y <span style="color:var(--accent-amber);">Basili et al. (1996)</span>, quienes confirman que los mayores porcentajes de esfuerzo se dedican al mantenimiento perfectivo, no al correctivo como suele asumirse.</p>
     </div>
 </section>
 
@@ -1807,9 +1816,126 @@ img, video, canvas, svg { max-width: 100%; max-height: 100%; }
 </section>
 
 <!-- =====================================================================
-     SLIDE 25 — Section Header: Ingeniería Dura (SIN CAMBIOS)
+     SLIDE 25 — NUEVA: Basili et al. — 11 Actividades de Mantenimiento (L159-191)
+     Se incluyen las 11 actividades + distribución del esfuerzo correctivo vs perfectivo.
      ===================================================================== -->
-<section class="slide section-header" data-slide="25">
+<section class="slide content-slide" data-slide="25">
+    <div class="slide-content">
+        <h2 class="reveal">Las <span class="accent">11 Actividades Concretas</span> del Mantenimiento</h2>
+        <p class="text-secondary reveal" style="margin-top:4px; font-size:20px;">Basili et al. (1996)</p>
+        <div class="title-rule reveal"></div>
+        <div class="two-col" style="gap:36px; margin-top:12px;">
+            <div>
+                <ol class="role-tasks" style="list-style:none; padding:0; margin-top:0;">
+                    <li class="reveal" style="margin-bottom:14px;"><span style="color:var(--accent-amber); font-weight:500;">01</span> &nbsp;Análisis de impacto y de costes/beneficios</li>
+                    <li class="reveal" style="margin-bottom:14px;"><span style="color:var(--accent-amber); font-weight:500;">02</span> &nbsp;Comprensión del cambio</li>
+                    <li class="reveal" style="margin-bottom:14px;"><span style="color:var(--accent-amber); font-weight:500;">03</span> &nbsp;Diseño del cambio</li>
+                    <li class="reveal" style="margin-bottom:14px;"><span style="color:var(--accent-amber); font-weight:500;">04</span> &nbsp;Codificación y pruebas unitarias</li>
+                    <li class="reveal" style="margin-bottom:14px;"><span style="color:var(--accent-amber); font-weight:500;">05</span> &nbsp;Inspección, certificación y consultoría</li>
+                    <li class="reveal" style="margin-bottom:14px;"><span style="color:var(--accent-amber); font-weight:500;">06</span> &nbsp;Pruebas de integración</li>
+                </ol>
+            </div>
+            <div>
+                <ol class="role-tasks" style="list-style:none; padding:0; margin-top:0;">
+                    <li class="reveal" style="margin-bottom:14px;"><span style="color:var(--accent-amber); font-weight:500;">07</span> &nbsp;Pruebas de aceptación</li>
+                    <li class="reveal" style="margin-bottom:14px;"><span style="color:var(--accent-amber); font-weight:500;">08</span> &nbsp;Pruebas de regresión</li>
+                    <li class="reveal" style="margin-bottom:14px;"><span style="color:var(--accent-amber); font-weight:500;">09</span> &nbsp;Documentación del sistema</li>
+                    <li class="reveal" style="margin-bottom:14px;"><span style="color:var(--accent-amber); font-weight:500;">10</span> &nbsp;Otra documentación (del usuario)</li>
+                    <li class="reveal" style="margin-bottom:14px;"><span style="color:var(--accent-amber); font-weight:500;">11</span> &nbsp;Otras actividades (gestión del proyecto)</li>
+                </ol>
+            </div>
+        </div>
+        <div class="callout-box reveal" style="margin-top:18px; max-width:1500px;">
+            <p style="font-size:22px; line-height:1.6;">La proporción de esfuerzo varía según el tipo de mantenimiento: en <span style="color:var(--accent-amber);">correctivo</span> el mayor esfuerzo se dedica a <span style="color:var(--accent-amber);">comprensión</span>; en <span style="color:var(--accent-amber);">perfectivo</span> a <span style="color:var(--accent-amber);">inspección y certificación</span>; diseño, codificación y pruebas son similares en ambos.</p>
+        </div>
+    </div>
+</section>
+
+<!-- =====================================================================
+     SLIDE 26 — NUEVA: Leyes de Lehman — Completas (L241-281)
+     Las 5 leyes con descripciones del PDF del docente.
+     ===================================================================== -->
+<section class="slide content-slide" data-slide="26">
+    <div class="slide-content">
+        <h2 class="reveal">Por qué el Software <span class="accent">Nunca se Termina</span></h2>
+        <p class="text-secondary reveal" style="margin-top:4px; font-size:20px;">Leyes de Lehman (1980) — confirmadas por Lehman et al. (1998)</p>
+        <div class="title-rule reveal"></div>
+        <ul class="laws-list" style="margin-top:16px;">
+            <li class="reveal">
+                <span class="law-num">I</span>
+                <div class="law-content">
+                    <h3>Continuidad del Cambio</h3>
+                    <p>Un programa usado en el mundo real debe cambiar; si no, será cada vez menos usado. Tan pronto como un programa ha sido escrito, está ya desfasado.</p>
+                </div>
+            </li>
+            <li class="reveal">
+                <span class="law-num">II</span>
+                <div class="law-content">
+                    <h3>Incremento de la Complejidad</h3>
+                    <p>Con los cambios, la estructura se vuelve más compleja salvo que se haga un esfuerzo activo para evitar este fenómeno.</p>
+                </div>
+            </li>
+            <li class="reveal">
+                <span class="law-num">III</span>
+                <div class="law-content">
+                    <h3>Evolución del Programa</h3>
+                    <p>Proceso autorregulado: las medidas de tamaño, tiempo entre versiones y número de errores revelan tendencias e invariantes estadísticas.</p>
+                </div>
+            </li>
+            <li class="reveal">
+                <span class="law-num">IV</span>
+                <div class="law-content">
+                    <h3>Conservación de la Estabilidad Organizacional</h3>
+                    <p>La carga de desarrollo es aproximadamente constante e independiente de los recursos dedicados a lo largo de la vida del programa.</p>
+                </div>
+            </li>
+            <li class="reveal">
+                <span class="law-num">V</span>
+                <div class="law-content">
+                    <h3>Conservación de la Familiaridad</h3>
+                    <p>El incremento de cambios por versión (release) es aproximadamente constante.</p>
+                </div>
+            </li>
+        </ul>
+    </div>
+</section>
+
+<!-- =====================================================================
+     SLIDE 27 — NUEVA: Problemas del Mantenimiento (L283-356)
+     10 problemas clásicos identificados por Schneidewind (1987) y otros autores.
+     ===================================================================== -->
+<section class="slide content-slide" data-slide="27">
+    <div class="slide-content">
+        <h2 class="reveal">Problemas <span class="accent">Clásicos</span> del Mantenimiento de Software</h2>
+        <p class="text-secondary reveal" style="margin-top:4px; font-size:20px;">Schneidewind (1987), Pressman (1993), Baxter y Pigdeon (1997), Sommerville (1992)</p>
+        <div class="title-rule reveal"></div>
+        <div class="two-col" style="gap:40px; margin-top:16px;">
+            <div>
+                <ul class="factors-list" style="margin-top:0;">
+                    <li class="reveal"><span class="factor-num">1</span>Mantenimiento ad-hoc, sin metodología formal. Pressman: "raramente existen organizaciones formales".</li>
+                    <li class="reveal"><span class="factor-num">2</span>Documentación desfasada o inexistente (Baxter y Pigdeon: uno de los cuatro problemas más importantes).</li>
+                    <li class="reveal"><span class="factor-num">3</span>Código que no cumple estándares — cambio tras cambio los programas pierden estructura.</li>
+                    <li class="reveal"><span class="factor-num">4</span>Incremento en el tiempo necesario para entender los programas.</li>
+                    <li class="reveal"><span class="factor-num">5</span>Efectos secundarios por cambios — interdependencias ocultas entre variables y procedimientos.</li>
+                </ul>
+            </div>
+            <div>
+                <ul class="factors-list" style="margin-top:0;">
+                    <li class="reveal"><span class="factor-num">6</span>Costos de mantenimiento muy altos — los sistemas se vuelven cada vez más difíciles y costosos de cambiar.</li>
+                    <li class="reveal"><span class="factor-num">7</span>Sommerville: "cualquier cambio conlleva corrupción de la estructura del software".</li>
+                    <li class="reveal"><span class="factor-num">8</span>Decisiones de programación no documentadas — el personal de mantenimiento no puede acceder a ellas.</li>
+                    <li class="reveal"><span class="factor-num">9</span>Falta de participación del usuario durante el desarrollo — el producto no satisface necesidades reales.</li>
+                    <li class="reveal"><span class="factor-num">10</span>Problemas de gestión: programadores ven el mantenimiento como actividad inferior, menos creativa.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- =====================================================================
+     SLIDE 28 — Section Header: Ingeniería Dura (SIN CAMBIOS, renumbered)
+     ===================================================================== -->
+<section class="slide section-header" data-slide="28">
     <div class="slide-content">
         <div class="section-number reveal-scale">05</div>
         <h2 class="reveal">Ingeniería <span class="accent">Dura</span> y Consecuencias</h2>
@@ -1817,10 +1943,10 @@ img, video, canvas, svg { max-width: 100%; max-height: 100%; }
 </section>
 
 <!-- =====================================================================
-     SLIDE 26 — CORREGIDO: Mantenibilidad (L249-263)
+     SLIDE 29 — CORREGIDO: Mantenibilidad (L249-263)
      Cada píldora incluye micro-definición, no solo el nombre.
      ===================================================================== -->
-<section class="slide content-slide" data-slide="26">
+<section class="slide content-slide" data-slide="29">
     <div class="slide-content">
         <h2 class="reveal"><span class="accent">Mantenibilidad</span> (ISO/IEC 9126)</h2>
         <p class="text-secondary reveal" style="margin-top:4px; max-width:1200px;">Maintainability</p>
@@ -1852,10 +1978,10 @@ img, video, canvas, svg { max-width: 100%; max-height: 100%; }
 </section>
 
 <!-- =====================================================================
-     SLIDE 27 — CORREGIDO: Efecto Dominó (L266-275)
+     SLIDE 30 — CORREGIDO: Efecto Dominó (L266-275)
      Atribución académica: Haney, Yau, Collofello, Black
      ===================================================================== -->
-<section class="slide content-slide" data-slide="27">
+<section class="slide content-slide" data-slide="30">
     <div class="slide-content">
         <h2 class="reveal">Efecto <span class="accent">Dominó</span></h2>
         <p class="text-secondary reveal" style="margin-top:4px; max-width:1200px;">Ripple Effect</p>
@@ -1877,9 +2003,9 @@ img, video, canvas, svg { max-width: 100%; max-height: 100%; }
 </section>
 
 <!-- =====================================================================
-     SLIDE 28 — NUEVA: Estabilidad de un Diseño (L279-285)
+     SLIDE 31 — NUEVA: Estabilidad de un Diseño (L279-285)
      ===================================================================== -->
-<section class="slide content-slide" data-slide="28">
+<section class="slide content-slide" data-slide="31">
     <div class="slide-content">
         <h2 class="reveal">Estabilidad de un <span class="accent">Diseño</span></h2>
         <p class="text-secondary reveal" style="margin-top:8px; max-width:1200px;">Design Stability</p>
@@ -1900,9 +2026,9 @@ img, video, canvas, svg { max-width: 100%; max-height: 100%; }
 </section>
 
 <!-- =====================================================================
-     SLIDE 29 — NUEVA: Sistemas Heredados / Legacy (L288-303)
+     SLIDE 32 — NUEVA: Sistemas Heredados / Legacy (L288-303)
      ===================================================================== -->
-<section class="slide content-slide" data-slide="29">
+<section class="slide content-slide" data-slide="32">
     <div class="slide-content">
         <h2 class="reveal">Sistemas <span class="accent">Heredados</span></h2>
         <p class="text-secondary reveal" style="margin-top:4px;">Legacy Systems</p>
@@ -1924,10 +2050,10 @@ img, video, canvas, svg { max-width: 100%; max-height: 100%; }
 </section>
 
 <!-- =====================================================================
-     SLIDE 30 — CORREGIDO: Cadena causa→costo (L310-326)
+     SLIDE 33 — CORREGIDO: Cadena causa→costo (L310-326)
      De 4 nodos a 6 nodos. Incluye Alto Acoplamiento y Baja Mantenibilidad.
      ===================================================================== -->
-<section class="slide content-slide" data-slide="30">
+<section class="slide content-slide" data-slide="33">
     <div class="slide-content">
         <h2 class="reveal">La <span class="accent">Cadena</span> Causa → Costo</h2>
         <p class="text-secondary reveal" style="margin-top:4px; max-width:1300px;">Interdependencia arquitectónica e impacto de negocio</p>
@@ -1952,9 +2078,9 @@ img, video, canvas, svg { max-width: 100%; max-height: 100%; }
 </section>
 
 <!-- =====================================================================
-     SLIDE 31 — CORREGIDO: Conclusión / Valoración Personal (L329-355)
+     SLIDE 34 — CORREGIDO: Conclusión / Valoración Personal (L329-355)
      ===================================================================== -->
-<section class="slide content-slide" data-slide="31">
+<section class="slide content-slide" data-slide="34">
     <div class="slide-content">
         <h2 class="reveal">Conclusión y <span class="accent">Valoración Personal</span></h2>
         <div class="title-rule reveal"></div>
@@ -1985,49 +2111,7 @@ img, video, canvas, svg { max-width: 100%; max-height: 100%; }
     </div>
 </section>
 
-<!-- =====================================================================
-     SLIDE 32 — NUEVA: Registro de Cambios (Changelog)
-     ===================================================================== -->
-<section class="slide content-slide" data-slide="32">
-    <div class="slide-content">
-        <h2 class="reveal">Registro de <span class="accent">Cambios</span></h2>
-        <p class="text-secondary reveal" style="margin-top:4px;">Modificaciones realizadas para alinear la presentación 1:1 con el informe (Lx–Ly = líneas en /tmp/informe_mantenimiento.txt)</p>
-        <div class="title-rule reveal"></div>
-        <ul class="changelog-list">
-            <li class="reveal"><span class="ch-tag corregir">CORREGIR</span> Slide 1 — Fecha actualizada a "mayo 2026" (L19)</li>
-            <li class="reveal"><span class="ch-tag corregir">CORREGIR</span> Slide 2 — Agenda renombrada con 6 secciones del informe (L30–355)</li>
-            <li class="reveal"><span class="ch-tag nueva">NUEVA</span> Slide 4 — Introducción: disciplina fundamental y 3 ejes (L31–39)</li>
-            <li class="reveal"><span class="ch-tag nueva">NUEVA</span> Slide 5 — Crisis de los 60 y ciclo continuo (L44–47)</li>
-            <li class="reveal"><span class="ch-tag corregir">CORREGIR</span> Slide 6 — Definiciones: ANSI/IEEE 610.12 (1990) + ISO/IEC 14764 (2006) (L52–61)</li>
-            <li class="reveal"><span class="ch-tag eliminar">ELIMINAR</span> Slides 5 y 6 anteriores — Pressman y "Estándar Moderno" (no en PDF)</li>
-            <li class="reveal"><span class="ch-tag corregir">CORREGIR</span> Slide 7 — Síntesis: agregado "y funcionalidad" (L67)</li>
-            <li class="reveal"><span class="ch-tag corregir">CORREGIR</span> Slide 9 — Correctivo: eliminados % de origen de defectos (L85–87)</li>
-            <li class="reveal"><span class="ch-tag corregir">CORREGIR</span> Slide 10 — Adaptativo: expandido con SO/DB y funcionalidad percibida (L88–91)</li>
-            <li class="reveal"><span class="ch-tag corregir">CORREGIR</span> Slide 11 — Perfectivo: expandido con 4 ejemplos (L93–95)</li>
-            <li class="reveal"><span class="ch-tag corregir">CORREGIR</span> Slide 12 — Preventivo: "defectos latentes" y "antes de fallas" (L100–105)</li>
-            <li class="reveal"><span class="ch-tag nueva">NUEVA</span> Slide 13 — Cuadro 1: tabla comparativa de tipos de mantenimiento (L111–128)</li>
-            <li class="reveal"><span class="ch-tag corregir">CORREGIR</span> Slide 15 — Evolución histórica: rangos corregidos + drivers (L142–150)</li>
-            <li class="reveal"><span class="ch-tag eliminar">ELIMINAR</span> Referencia a "Frazer 1992" del slide 15 anterior</li>
-            <li class="reveal"><span class="ch-tag corregir">CORREGIR</span> Slide 16 — Distribución: 4 tipos con % y Origen del Costo (L161–171)</li>
-            <li class="reveal"><span class="ch-tag corregir">CORREGIR</span> Slide 17 — Costos: KLO, Regla 15–25%, equipos, downtime (L179–197)</li>
-            <li class="reveal"><span class="ch-tag corregir">CORREGIR</span> Slide 18 — Eliminada referencia a "Basili et al." (L203–232)</li>
-            <li class="reveal"><span class="ch-tag nueva">NUEVA</span> Slide 19 — Cuadro 4: tabla de actores y tareas (L209–232)</li>
-            <li class="reveal"><span class="ch-tag corregir">CORREGIR</span> Slide 20 — Resp. Mant.: Gestión de Solicitudes MR/PR, Scrum/Kanban (L211–214)</li>
-            <li class="reveal"><span class="ch-tag nueva">NUEVA</span> Slide 21 — Planificación de Transición (L215–217)</li>
-            <li class="reveal"><span class="ch-tag corregir">CORREGIR</span> Slide 22 — Analista: "prevenir regresiones" y tipos C/A/P (L218–221)</li>
-            <li class="reveal"><span class="ch-tag corregir">CORREGIR</span> Slide 23 — Programador: hotfixes, pruebas automatizadas, regresión (L222–228)</li>
-            <li class="reveal"><span class="ch-tag nueva">NUEVA</span> Slide 24 — Migración y Despliegue (L229–231)</li>
-            <li class="reveal"><span class="ch-tag corregir">CORREGIR</span> Slide 26 — Mantenibilidad: 5 subcaracterísticas con definiciones (L254–262)</li>
-            <li class="reveal"><span class="ch-tag corregir">CORREGIR</span> Slide 27 — Efecto Dominó: atribución Haney, Yau/Collofello/Black (L271–274)</li>
-            <li class="reveal"><span class="ch-tag nueva">NUEVA</span> Slide 28 — Estabilidad de un Diseño: inmunidad al efecto dominó (L279–285)</li>
-            <li class="reveal"><span class="ch-tag nueva">NUEVA</span> Slide 29 — Sistemas Heredados: 4 factores de riesgo (L288–303)</li>
-            <li class="reveal"><span class="ch-tag eliminar">ELIMINAR</span> Slide 24 anterior — Leyes de Lehman (no en PDF)</li>
-            <li class="reveal"><span class="ch-tag corregir">CORREGIR</span> Slide 30 — Cadena completa de 6 nodos (L310–326)</li>
-            <li class="reveal"><span class="ch-tag corregir">CORREGIR</span> Slide 31 — Conclusión: 2 razones + valoración personal (L329–355)</li>
-            <li class="reveal"><span class="ch-tag nueva">NUEVA</span> Slide 32 — Este registro de cambios</li>
-        </ul>
-    </div>
-</section>
+<!-- Eliminado: Slide 35 — Registro de Cambios -->
 
         </main>
     </div>
