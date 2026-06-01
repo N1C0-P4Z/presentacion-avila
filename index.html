@@ -1138,22 +1138,31 @@ img, video, canvas, svg { max-width: 100%; max-height: 100%; }
     <div class="slide-content">
         <h2 class="reveal">Una Disciplina <span class="accent">Fundamental</span></h2>
         <div class="title-rule reveal"></div>
-        <div class="intro-callout reveal">
-            <p>"El mantenimiento de software constituye una de las disciplinas fundamentales dentro de la ingeniería de software moderna. Lejos de ser una actividad secundaria o meramente correctiva, representa el conjunto de procesos sistemáticos que garantizan la supervivencia, la adaptabilidad y el valor estratégico de los sistemas informáticos a lo largo de su ciclo de vida operativo."</p>
-        </div>
-        <p class="text-secondary reveal" style="margin-top:32px; letter-spacing:0.08em; text-transform:uppercase;">Este informe aborda tres ejes:</p>
-        <div class="ejes-grid">
-            <div class="eje-card reveal">
-                <div class="eje-name">Definiciones</div>
-                <div class="eje-desc">Conceptos fundamentales y síntesis metodológica del mantenimiento</div>
+        <div style="display:flex; gap:32px; align-items:flex-start;">
+            <div style="flex:1; max-width:1300px;">
+                <div class="intro-callout reveal">
+                    <p>"El mantenimiento de software constituye una de las disciplinas fundamentales dentro de la ingeniería de software moderna. Lejos de ser una actividad secundaria o meramente correctiva, representa el conjunto de procesos sistemáticos que garantizan la supervivencia, la adaptabilidad y el valor estratégico de los sistemas informáticos a lo largo de su ciclo de vida operativo."</p>
+                </div>
+                <p class="text-secondary reveal" style="margin-top:24px; letter-spacing:0.08em; text-transform:uppercase;">Este informe aborda tres ejes:</p>
+                <div class="ejes-grid">
+                    <div class="eje-card reveal">
+                        <div class="eje-name">Definiciones</div>
+                        <div class="eje-desc">Conceptos fundamentales y síntesis metodológica del mantenimiento</div>
+                    </div>
+                    <div class="eje-card reveal">
+                        <div class="eje-name">Clasificación</div>
+                        <div class="eje-desc">Taxonomía estandarizada de actividades y criterios</div>
+                    </div>
+                    <div class="eje-card reveal">
+                        <div class="eje-name">Métricas + Roles + Conceptos</div>
+                        <div class="eje-desc">Impacto económico, actores involucrados y fundamentos técnicos</div>
+                    </div>
+                </div>
             </div>
-            <div class="eje-card reveal">
-                <div class="eje-name">Clasificación</div>
-                <div class="eje-desc">Taxonomía estandarizada de actividades y criterios</div>
-            </div>
-            <div class="eje-card reveal">
-                <div class="eje-name">Métricas + Roles + Conceptos</div>
-                <div class="eje-desc">Impacto económico, actores involucrados y fundamentos técnicos</div>
+            <div class="portrait-card reveal" style="display:flex; flex-direction:column; align-items:center; gap:16px; flex-shrink:0; width:240px; padding:28px 24px; background:rgba(255,255,255,0.02); border:1px solid rgba(255,179,0,0.1); border-radius:8px; margin-top:8px; margin-right:40px;">
+                <img src="imagenes/Manny_Lehman.jpg" alt="Meir M. Lehman" style="width:140px; height:140px; border-radius:50%; object-fit:cover; border:2px solid rgba(255,179,0,0.25); box-shadow:0 4px 20px rgba(0,0,0,0.4); flex-shrink:0;">
+                <p style="font-family:var(--font-body); font-weight:500; font-size:18px; color:var(--accent-amber); text-align:center; margin-bottom:4px;">Meir M. Lehman</p>
+                <p style="font-family:var(--font-body); font-weight:300; font-size:15px; color:var(--text-secondary); text-align:center; line-height:1.5;">Padre de las <span style="color:var(--accent-amber);">Leyes de la Evolución del Software</span> (1974). El software en uso cambia continuamente o muere.</p>
             </div>
         </div>
     </div>
@@ -1166,27 +1175,36 @@ img, video, canvas, svg { max-width: 100%; max-height: 100%; }
     <div class="slide-content">
         <h2 class="reveal">La Crisis de Complejidad y el <span class="accent">Ciclo Continuo</span></h2>
         <div class="title-rule reveal"></div>
-        <p class="reveal" style="line-height:1.7; max-width:1200px; margin-bottom:24px;">
-            Una vez consolidada la ingeniería de software a raíz de la <span style="color:var(--accent-amber);">crisis de complejidad de fines de los años 60</span>, se hizo evidente que la entrega inicial de un programa era apenas el comienzo de un ciclo continuo de modificaciones destinadas a asegurar su supervivencia y utilidad.
-        </p>
-        <div class="mini-timeline">
-            <div class="mini-tl-node reveal">
-                <div class="mini-tl-year">Fines de los 60</div>
-                <div class="mini-tl-text">Crisis de complejidad del software</div>
+        <div style="display:flex; gap:32px; align-items:flex-start;">
+            <div style="flex:1; max-width:1300px;">
+                <p class="reveal" style="line-height:1.7; margin-bottom:24px;">
+                    Una vez consolidada la ingeniería de software a raíz de la <span style="color:var(--accent-amber);">crisis de complejidad de fines de los años 60</span>, se hizo evidente que la entrega inicial de un programa era apenas el comienzo de un ciclo continuo de modificaciones destinadas a asegurar su supervivencia y utilidad.
+                </p>
+                <div class="mini-timeline">
+                    <div class="mini-tl-node reveal">
+                        <div class="mini-tl-year">Fines de los 60</div>
+                        <div class="mini-tl-text">Crisis de complejidad del software</div>
+                    </div>
+                    <span class="mini-tl-arrow reveal">⟶</span>
+                    <div class="mini-tl-node reveal">
+                        <div class="mini-tl-year">Entrega Inicial</div>
+                        <div class="mini-tl-text">El programa se libera a producción</div>
+                    </div>
+                    <span class="mini-tl-arrow reveal">⟶</span>
+                    <div class="mini-tl-node reveal">
+                        <div class="mini-tl-year">Ciclo Continuo</div>
+                        <div class="mini-tl-text">Modificaciones para asegurar supervivencia y utilidad</div>
+                    </div>
+                </div>
+                <div class="callout-box reveal" style="margin-top:32px;">
+                    <p>"La entrega inicial de un programa era apenas el comienzo."</p>
+                </div>
             </div>
-            <span class="mini-tl-arrow reveal">⟶</span>
-            <div class="mini-tl-node reveal">
-                <div class="mini-tl-year">Entrega Inicial</div>
-                <div class="mini-tl-text">El programa se libera a producción</div>
+            <div class="portrait-card reveal" style="display:flex; flex-direction:column; align-items:center; gap:16px; flex-shrink:0; width:240px; padding:28px 24px; background:rgba(255,255,255,0.02); border:1px solid rgba(255,179,0,0.1); border-radius:8px; margin-top:8px; margin-right:40px;">
+                <img src="imagenes/Margaret_Hamilton_1995.jpg" alt="Margaret Hamilton" style="width:140px; height:140px; border-radius:50%; object-fit:cover; border:2px solid rgba(255,179,0,0.25); box-shadow:0 4px 20px rgba(0,0,0,0.4); flex-shrink:0;">
+                <p style="font-family:var(--font-body); font-weight:500; font-size:18px; color:var(--accent-amber); text-align:center; margin-bottom:4px;">Margaret Hamilton</p>
+                <p style="font-family:var(--font-body); font-weight:300; font-size:15px; color:var(--text-secondary); text-align:center; line-height:1.5;">Acuñó el término <span style="color:var(--accent-amber);">"Ingeniería de Software"</span> liderando el software del Apollo Guidance Computer en el MIT.</p>
             </div>
-            <span class="mini-tl-arrow reveal">⟶</span>
-            <div class="mini-tl-node reveal">
-                <div class="mini-tl-year">Ciclo Continuo</div>
-                <div class="mini-tl-text">Modificaciones para asegurar supervivencia y utilidad</div>
-            </div>
-        </div>
-        <div class="callout-box reveal" style="margin-top:40px;">
-            <p>"La entrega inicial de un programa era apenas el comienzo."</p>
         </div>
     </div>
 </section>

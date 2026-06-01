@@ -66,29 +66,39 @@
 
 ## Slide 4 — Una Disciplina Fundamental
 
-**Tiempo estimado:** 1 minuto
+**Tiempo estimado:** 1 minuto 15 segundos
 
 **Qué dice la slide:**
 - Cita textual en la diapositiva: "El mantenimiento de software constituye una de las disciplinas fundamentales dentro de la ingeniería de software moderna. Lejos de ser una actividad secundaria o meramente correctiva, representa el conjunto de procesos sistemáticos que garantizan la supervivencia, la adaptabilidad y el valor estratégico de los sistemas informáticos a lo largo de su ciclo de vida operativo."
 - Tres ejes de la presentación: Definiciones, Clasificación, Métricas + Roles + Conceptos
+- **Retrato de Meir M. Lehman** — Padre de las Leyes de la Evolución del Software (1974). El software en uso cambia continuamente o muere.
 
 **Qué tiene que decir:**
-> "El mantenimiento de software no es simplemente 'arreglar errores'. Como pueden ver en la diapositiva, es una disciplina fundamental. Cuando un sistema de software se entrega, no termina su vida útil —al contrario, recién empieza un ciclo continuo de cambios. La cita que ven en pantalla lo resume perfectamente: el mantenimiento garantiza la supervivencia, la adaptabilidad y el valor estratégico de los sistemas. Esta presentación aborda tres grandes ejes que van a ver reflejados a lo largo de toda la presentación: las definiciones, la clasificación de actividades, y las métricas junto con los roles y conceptos técnicos."
+> "El mantenimiento de software no es simplemente 'arreglar errores'. Como pueden ver en la diapositiva, es una disciplina fundamental. Cuando un sistema de software se entrega, no termina su vida útil —al contrario, recién empieza un ciclo continuo de cambios. La cita que ven en pantalla lo resume perfectamente: el mantenimiento garantiza la supervivencia, la adaptabilidad y el valor estratégico de los sistemas.
+>
+>A la derecha tenemos a **Meir M. Lehman**, el padre de las Leyes de la Evolución del Software. En 1974 demostró algo clave: el software que se usa en el mundo real debe cambiar constantemente o simplemente muere. Esa fue la primera ley —la ley del cambio continuo— y es la base teórica que explica por qué existe el mantenimiento de software como disciplina.
+>
+>Esta presentación aborda tres grandes ejes que van a ver reflejados a lo largo de toda la presentación: las definiciones, la clasificación de actividades, y las métricas junto con los roles y conceptos técnicos."
 
 ---
 
 ## Slide 5 — La Crisis de Complejidad y el Ciclo Continuo
 
-**Tiempo estimado:** 1 minuto
+**Tiempo estimado:** 1 minuto 15 segundos
 
 **Qué dice la slide:**
 - La ingeniería de software surgió por la crisis de complejidad de fines de los 60
 - La entrega inicial es solo el comienzo
 - Línea temporal: Crisis de los 60 → Entrega Inicial → Ciclo Continuo
 - Cita: "La entrega inicial de un programa era apenas el comienzo"
+- **Retrato de Margaret Hamilton** — Acuñó el término "Ingeniería de Software" liderando el software del Apollo Guidance Computer en el MIT.
 
 **Qué tiene que decir:**
-> "Para entender el mantenimiento, tenemos que remontarnos a fines de los años 60. En esa época, el software se volvió tan complejo que se empezó a hablar de una 'crisis de complejidad'. Los proyectos se atrasaban, se iban de presupuesto, y el código era cada vez más difícil de manejar. De esa crisis nació la ingeniería de software como disciplina. Y lo que se descubrió fue algo clave: cuando un programa se entrega al cliente, no es el final —es el comienzo de un ciclo continuo de modificaciones para mantenerlo vivo y útil. Como dice la cita en pantalla, la entrega inicial era apenas el comienzo."
+> "Para entender el mantenimiento, tenemos que remontarnos a fines de los años 60. En esa época, el software se volvió tan complejo que se empezó a hablar de una 'crisis de complejidad'. Los proyectos se atrasaban, se iban de presupuesto, y el código era cada vez más difícil de manejar. De esa crisis nació la ingeniería de software como disciplina.
+>
+>Y acá a la derecha tenemos a **Margaret Hamilton**, que fue quien acuñó precisamente el término 'Ingeniería de Software' mientras lideraba el equipo que desarrolló el software de a bordo del Apollo Guidance Computer en el MIT —el software que llevó el hombre a la Luna. Ella empezó a usar ese término para que el desarrollo de software se tomara tan en serio como la ingeniería de hardware.
+>
+>Lo que se descubrió fue algo clave: cuando un programa se entrega al cliente, no es el final —es el comienzo de un ciclo continuo de modificaciones para mantenerlo vivo y útil. Como dice la cita en pantalla, la entrega inicial era apenas el comienzo."
 
 ---
 
