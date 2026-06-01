@@ -114,11 +114,11 @@
 **Qué tiene que decir:**
 > "Bueno, esta idea de que el software cambia continuamente no es solo una observación — está formalizada en estándares internacionales. Acá tenemos las dos definiciones institucionales más importantes.
 >
-> La primera es de la **ANSI/IEEE 610.12 de 1990**, un estándar de terminología. Dice que el mantenimiento es la modificación del software después de la entrega para tres cosas: corregir defectos, mejorar el rendimiento, o adaptarlo a cambios del entorno.
+> La primera es de la **ANSI/IEEE 610.12 de 1990**, un estándar de terminología que define el mantenimiento como la modificación del software después de la entrega para corregir defectos, mejorar el rendimiento, o adaptarlo a cambios del entorno.
 >
-> La segunda es de la **ISO/IEC 14764 de 2006**, que es más reciente y más amplia. No solo habla de modificar el código, sino que lo describe como un proceso que preserva la integridad del sistema y que cubre TODO el ciclo de vida — desde la transición del desarrollo hasta el retiro definitivo del producto.
+> La segunda es de la **ISO/IEC 14764 de 2006**, que va más allá: no habla solo de modificar código, sino de un proceso que preserva la integridad del sistema y cubre TODO el ciclo de vida — desde la planificación de la transición hasta el retiro definitivo.
 >
-> Y **Pressman**, un autor clásico de ingeniería de software, complementa diciendo que el mantenimiento abarca corrección de errores, adaptación a nuevos entornos y mejora de prestaciones."
+> Antes de que existiera esta última norma, **Pressman** ya en 1998 describía el mantenimiento con la misma visión: corrección de errores, adaptación a nuevos entornos y mejora de prestaciones. Un autor clásico que ya anticipaba lo que después formalizaron los estándares."
 
 ---
 
